@@ -26,7 +26,7 @@ abstract class BaseViewModel<UiState, UiAction, UiEffect>(
     )
 
     private val _uiState = MutableStateFlow(initialUiState)
-    val uiState: StateFlow<UiState> by lazy {  //Burada kullanımı, by lazy { }içeriğin yalnızca veri alınırken çağrılmasını ve değişkene onStarther eriştiğimizde çağrılmamasını sağlamak içindir.state
+    val uiState: StateFlow<UiState> by lazy {
         _uiState.onStart {
             viewModelScope.launch {
                 initialDataLoad()
