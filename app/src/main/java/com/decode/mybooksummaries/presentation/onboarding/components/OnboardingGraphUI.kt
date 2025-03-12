@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.decode.mybooksummaries.presentation.OnboardingModel
+import com.decode.mybooksummaries.presentation.onboarding.OnboardingModel
 
 @Composable
 fun OnboardingGraphUI(onboardingModel: OnboardingModel) {

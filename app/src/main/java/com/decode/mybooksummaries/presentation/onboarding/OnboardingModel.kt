@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.presentation
+package com.decode.mybooksummaries.presentation.onboarding
 
 import androidx.annotation.DrawableRes
 import com.decode.mybooksummaries.R

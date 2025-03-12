@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.presentation
+package com.decode.mybooksummaries.presentation.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
-    val pages = listOf(
+    val pages = mutableListOf(
         OnboardingModel.FirstPage,
         OnboardingModel.SecondPage,
         OnboardingModel.ThirdPage,
@@ -42,11 +42,11 @@ fun OnboardingScreen(onFinished: () -> Unit) {
     val buttonState = remember {
         derivedStateOf {
             when (pagerState.currentPage) {
-                0 -> listOf("", "İleri")
-                1 -> listOf("Geri", "İleri")
-                2 -> listOf("Geri", "İleri")
-                3 -> listOf("Geri", "Başla")
-                else -> listOf("", "")
+                0 -> mutableListOf("", "İleri")
+                1 -> mutableListOf("Geri", "İleri")
+                2 -> mutableListOf("Geri", "İleri")
+                3 -> mutableListOf("Geri", "Başla")
+                else -> mutableListOf("", "")
             }
         }
     }
