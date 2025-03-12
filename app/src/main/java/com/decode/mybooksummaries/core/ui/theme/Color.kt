@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.ui.theme
+package com.decode.mybooksummaries.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

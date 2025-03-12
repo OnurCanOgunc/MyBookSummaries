@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.ui.theme
+package com.decode.mybooksummaries.core.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
