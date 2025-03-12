@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name" translatable="false">MyBookSummaries</string>
+    <string name="web_client_id" translatable="false">126193745930-tq30omeser7mshl68vqjk0ek5u9q2v3f.apps.googleusercontent.com</string>
+    <string name="error_email_in_use">Bu e-posta adresi zaten kullanımda.</string>
+    <string name="error_weak_password">Şifre çok zayıf. Lütfen daha güçlü bir şifre seçin. Şifrenin en az 6 karakter olması, büyük/küçük harf ve özel karakter içermelidir.</string>
+    <string name="error_invalid_email">Lütfen e-posta adresinizi ve şifrenizi kontrol edin</string>
+    <string name="error_user_not_found">Bu e-posta adresine kayıtlı kullanıcı bulunamadı.</string>
+    <string name="error_unknown">Bilinmeyen bir hata oluştu.</string>
+    <string name="error_google_auth_failed">Google ile kimlik doğrulama başarısız oldu.</string>
+</resources>
