@@ -7,8 +7,18 @@ sealed interface Screens {
     data object Onboarding
 
     @Serializable
-    sealed interface Main: Screens {
+    object Main {
         @Serializable
         data object Home
+    }
+
+    @Serializable
+    object Auth {
+        @Serializable
+        data object Welcome
+        @Serializable
+        data object SignIn
+        @Serializable
+        data object SignUp
     }
 }
