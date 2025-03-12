@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.0"
+compiler = "1.5.15"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -8,9 +9,30 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
+firebaseBom = "33.7.0"
+playServicesAuth = "21.3.0"
+service = "4.4.2"
+crashlytics = "3.0.2"
+navigationCompose = "2.8.6"
+kotlinxSerializationJson = "1.6.2"
+materialIconsExtended = "1.7.7"
+credentials = "1.5.0-rc01"
+googleid = "1.1.1"
+credentialsPlayServicesAuth = "1.5.0-rc01"
+coil = "2.7.0"
+coreSplachScreen = "1.0.1"
+hilt = "2.50"
+hilt-compose = "1.2.0"
+ksp = "2.0.0-1.0.24"
+coroutines = "1.9.0"
+accompanist = "0.37.0"
+roomKtx = "2.6.1"
+workRuntimeKtx = "2.9.1"
+hiltWork = "1.2.0"
 
 
 [libraries]
+androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -25,9 +47,41 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-auth = {module = "com.google.firebase:firebase-auth-ktx"}
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
+coil = {module = "io.coil-kt:coil-compose", version.ref = "coil"}
+accompanist-permissions = {module = "com.google.accompanist:accompanist-permissions",version.ref = "accompanist"}
+androidx-core-splashscreen = {module = "androidx.core:core-splashscreen", version.ref = "coreSplachScreen"}
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-compose" }
+
+hilt-android-compilerx = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+googleService = { id = "com.google.gms.google-services", version.ref = "service" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
