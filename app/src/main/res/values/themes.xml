@@ -3,4 +3,9 @@
 
     <style name="Theme.MyBookSummaries" parent="android:Theme.Material.Light.NoActionBar"/>
 
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.MyBookSummaries</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
+    </style>
+
 </resources>
