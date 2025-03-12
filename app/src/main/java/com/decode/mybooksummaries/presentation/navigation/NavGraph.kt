@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.decode.mybooksummaries.presentation.home.HomeScreen
+import com.decode.mybooksummaries.presentation.navigation.nav_graph.authGraph
 import com.decode.mybooksummaries.presentation.onboarding.OnboardingScreen
 import com.decode.mybooksummaries.presentation.onboarding.OnboardingUtils
 
@@ -14,15 +15,15 @@ import com.decode.mybooksummaries.presentation.onboarding.OnboardingUtils
 fun NavGraph(
     navController: NavHostController,
     onboardingUtils: OnboardingUtils,
+    isLoggedIn: Boolean,
 ) {
     val startDestination = remember {
         if (onboardingUtils.isOnboardingCompleted()) {
-            Screens.Main.Home
+            if (isLoggedIn == false) Screens.Main.Home else Screens.Auth
         } else {
             Screens.Onboarding
         }
     }
-
 
     NavHost(
         modifier = Modifier,
@@ -37,6 +38,7 @@ fun NavGraph(
                 }
             })
         }
+        authGraph(navController)
         composable<Screens.Main.Home> {
             HomeScreen()
         }

@@ -7,6 +7,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     var showSplashScreen = true
     private val onboardingUtils by lazy { OnboardingUtils(this) }
+    private val mainViewModel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -63,6 +65,7 @@ class MainActivity : ComponentActivity() {
                 NavGraph(
                     navController = navController,
                     onboardingUtils = onboardingUtils,
+                    isLoggedIn = mainViewModel.authUser
                 )
             }
         }
