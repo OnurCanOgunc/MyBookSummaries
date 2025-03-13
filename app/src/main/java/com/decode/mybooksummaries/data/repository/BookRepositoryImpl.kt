@@ -7,6 +7,7 @@ import com.decode.mybooksummaries.data.mapper.toBook
 import com.decode.mybooksummaries.data.mapper.toBookEntity
 import com.decode.mybooksummaries.domain.model.Book
 import com.decode.mybooksummaries.domain.repository.BookRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
+import java.util.TimeZone
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -94,6 +97,59 @@ class BookRepositoryImpl @Inject constructor(
         }
     }.catch { e ->
         emit(Response.Failure(e.message ?: "Error searching books"))
+    }
+
+    override suspend fun getTotalBooksRead(isConnected: Boolean): Response<Int> {
+        return try {
+            val localCount = bookDao.getTotalBooksRead()
+
+            if (localCount > 0) {
+                return Response.Success(localCount)
+            }
+
+            if (isConnected) {
+                val remoteCount =
+                    booksRef.whereEqualTo("readingStatus", "Read").get().await().size()
+                return Response.Success(remoteCount)
+            }
+
+            Response.Failure("No data available locally and no internet connection")
+        } catch (e: Exception) {
+            Response.Failure(e.message ?: "Error getting total books read")
+        }
+    }
+
+
+    override suspend fun getBooksReadThisMonth(): Response<Int> {
+        return try {
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                set(Calendar.DAY_OF_MONTH, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+
+            val firstDayOfMonthMillis = calendar.timeInMillis
+
+            val localCount = bookDao.getBooksReadThisMonth(firstDayOfMonthMillis)
+            if (localCount > 0) return Response.Success(localCount)
+
+            val firstDayOfMonthTimestamp = Timestamp(calendar.time)
+            val snapshot = booksRef
+                .whereEqualTo("readingStatus", "Read")
+                .whereGreaterThanOrEqualTo("finishedReadingDate", firstDayOfMonthTimestamp)
+                .get()
+                .await()
+            snapshot.toObjects(Book::class.java).forEach { book ->
+                bookDao.insertBook(book.toBookEntity())
+            }
+            Log.d("BookRepositoryImpl", "getBooksReadThisMonth: ${snapshot.size()}")
+            Response.Success(snapshot.size())
+        } catch (e: Exception) {
+            Log.d("BookRepositoryImpl", "<getBooksReadThisMonth>: ${e.message}")
+            Response.Failure(e.message)
+        }
     }
 
     override suspend fun deleteBook(bookId: String, isConnected: Boolean): Response<String> {

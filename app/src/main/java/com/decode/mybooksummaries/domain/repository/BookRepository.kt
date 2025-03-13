@@ -10,4 +10,7 @@ interface BookRepository {
     suspend fun deleteBook(bookId: String, isConnected: Boolean): Response<String>
     suspend fun getBookById(id: String, isConnected: Boolean): Response<Book>
     fun getSearchBooks(query: String): Flow<Response<List<Book>>>
+    suspend fun getTotalBooksRead(isConnected: Boolean): Response<Int>
+    suspend fun getBooksReadThisMonth(): Response<Int>
+
 }
