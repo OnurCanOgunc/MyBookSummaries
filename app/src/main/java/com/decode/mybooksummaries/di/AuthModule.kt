@@ -9,6 +9,8 @@ import com.decode.mybooksummaries.domain.usecase.auth.LoginUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.LoginWithGoogleUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.ResetPasswordUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.SignOutUseCase
+import com.decode.mybooksummaries.domain.usecase.auth.UpdateDisplayNameUseCase
+import com.decode.mybooksummaries.domain.usecase.auth.UpdatePasswordUseCase
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.Module
@@ -40,5 +42,7 @@ object AuthModule {
         resetPasswordUseCase = ResetPasswordUseCase(authRepository),
         signOutUseCase = SignOutUseCase(authRepository),
         currentUserUseCase = CurrentUserUseCase(authRepository),
+        updateDisplayNameUseCase = UpdateDisplayNameUseCase(authRepository),
+        updatePasswordUseCase = UpdatePasswordUseCase(authRepository)
     )
 }
