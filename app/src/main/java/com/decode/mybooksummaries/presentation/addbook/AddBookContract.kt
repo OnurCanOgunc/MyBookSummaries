@@ -2,7 +2,6 @@ package com.decode.mybooksummaries.presentation.addbook
 
 import android.graphics.Bitmap
 import com.decode.mybooksummaries.domain.model.Book
-import com.decode.mybooksummaries.presentation.addbook.DatePickerType
 import com.google.firebase.Timestamp
 
 object AddBookContract {
@@ -36,7 +35,7 @@ object AddBookContract {
         data class OnFinishedReadingDateChange(val publicationDate: Long?) : UiAction
         data class OnImageUriChange(val imageUri: String) : UiAction
         data class OnDatePickerTypeChange(val datePickerType: DatePickerType?) : UiAction
-        data class onImageSelected(val imageUri: Bitmap?) : UiAction
+        data class OnImageSelected(val imageUri: Bitmap?) : UiAction
         object OnAddBookClick : UiAction
         object OnCancelClick : UiAction
         object OnBackClick : UiAction

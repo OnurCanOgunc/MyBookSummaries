@@ -62,7 +62,7 @@ fun AddBookScreen(
             }
         }
     }
-    LaunchedEffect(bookId) { // Burda LaunchedEffect dışında yöntemler ara
+    LaunchedEffect(bookId) {
         bookId?.let {
             Log.e("AddBookScreen", "LaunchedEffect called")
             onAction(UiAction.LoadBook(it))
@@ -97,7 +97,7 @@ fun AddBookScreen(
                     imageUri = uiState.imageUri,
                     onImageSelected = { uri ->
                         val bitmap = uriToBitmap(context, uri)
-                        onAction(UiAction.onImageSelected(bitmap))
+                        onAction(UiAction.OnImageSelected(bitmap))
                         val base64Image = uriToBase64(context, uri)
                         base64Image?.let {
                             onAction(UiAction.OnImageUriChange(it.toString()))

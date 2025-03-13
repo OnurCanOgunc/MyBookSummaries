@@ -56,7 +56,7 @@ class AddBookViewModel @Inject constructor(
                     )
                 }
 
-                is UiAction.onImageSelected -> updateUiState { copy(imageUri = uiAction.imageUri) }
+                is UiAction.OnImageSelected -> updateUiState { copy(imageUri = uiAction.imageUri) }
                 is UiAction.LoadBook -> getBookId(uiAction.bookId)
             }
         }

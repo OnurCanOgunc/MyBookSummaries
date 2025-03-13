@@ -7,6 +7,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import com.decode.mybooksummaries.presentation.addbook.AddBookScreen
+import com.decode.mybooksummaries.presentation.addbook.AddBookViewModel
+import com.decode.mybooksummaries.presentation.detail.DetailScreen
+import com.decode.mybooksummaries.presentation.detail.DetailViewModel
 import com.decode.mybooksummaries.presentation.home.HomeScreen
 import com.decode.mybooksummaries.presentation.home.HomeViewModel
 import com.decode.mybooksummaries.presentation.navigation.Screens
@@ -21,8 +26,36 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 uiState = uiState,
                 onAction = viewModel::onAction,
                 uiEffect = uiEffect,
-                onAddClick = { navController.navigate(Screens.Main.AddBook) },
+                onAddClick = { navController.navigate(Screens.Main.AddBook()) },
+                onDetailClick = { navController.navigate(Screens.Main.BookDetail(it))}
             )
+        }
+        composable<Screens.Main.AddBook> {
+            val arguments = it.toRoute<Screens.Main.AddBook>()
+            val viewModel = hiltViewModel<AddBookViewModel>()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            AddBookScreen(
+                bookId = arguments.bookId,
+                uiState = uiState,
+                uiEffect = uiEffect,
+                onAction = viewModel::onAction,
+                popBackStack = { navController.popBackStack() })
+        }
+        composable<Screens.Main.BookDetail> { backStackEntry ->
+            val arguments = backStackEntry.toRoute<Screens.Main.BookDetail>()
+            val viewModel = hiltViewModel<DetailViewModel>()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            DetailScreen(
+                bookId = arguments.bookId,
+                uiState = uiState,
+                uiEffect = uiEffect,
+                onAction = viewModel::onAction,
+                popBackStack = { navController.popBackStack() },
+                onAddBookClick = {
+                    navController.navigate(Screens.Main.AddBook(it))
+                })
         }
     }
 }
