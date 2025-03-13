@@ -3,6 +3,7 @@ package com.decode.mybooksummaries.di
 import android.content.Context
 import androidx.room.Room
 import com.decode.mybooksummaries.data.local.dao.BookDao
+import com.decode.mybooksummaries.data.local.dao.MonthlyGoalDao
 import com.decode.mybooksummaries.data.local.dao.QuoteDao
 import com.decode.mybooksummaries.data.local.db.BookDatabase
 import dagger.Module
@@ -35,5 +36,11 @@ object DatabaseModule {
     @Singleton
     fun provideQuoteDao(bookDatabase: BookDatabase): QuoteDao {
         return bookDatabase.quoteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMonthlyGoalDao(bookDatabase: BookDatabase): MonthlyGoalDao {
+        return bookDatabase.monthlyGoalDao()
     }
 }
