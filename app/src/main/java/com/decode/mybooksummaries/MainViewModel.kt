@@ -31,8 +31,9 @@ class MainViewModel @Inject constructor(
                 if (isConnected) {
                     val unsyncedBooks = db.bookDao().getUnsyncedBooks().isNotEmpty()
                     val deletedUnsyncedBooks = db.bookDao().getDeletedUnsyncedBooks().isNotEmpty()
+                    val monthlyGoals = db.monthlyGoalDao().getUnsyncedGoals().isNotEmpty()
                     Log.d("SyncViewModel", "$deletedUnsyncedBooks")
-                    if (unsyncedBooks || deletedUnsyncedBooks) {
+                    if (unsyncedBooks || deletedUnsyncedBooks || monthlyGoals) {
                         Log.d("SyncViewModel", "İnternet geldi, senkronizasyon başlatılıyor")
                         syncWorkManager.startOneTimeSync()
                     } else {

@@ -6,8 +6,11 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.decode.mybooksummaries.data.local.dao.BookDao
+import com.decode.mybooksummaries.data.local.dao.MonthlyGoalDao
 import com.decode.mybooksummaries.data.mapper.toBook
+import com.decode.mybooksummaries.data.mapper.toMonthlyGoal
 import com.decode.mybooksummaries.domain.repository.BookRepository
+import com.decode.mybooksummaries.domain.repository.MonthlyGoalRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
@@ -19,6 +22,8 @@ class SyncWorker @AssistedInject constructor(
     @Assisted private val workerParams: WorkerParameters,
     private val bookDao: BookDao,
     private val bookRepository: BookRepository,
+    private val monthlyGoalDao: MonthlyGoalDao,
+    private val monthlyGoalRepository: MonthlyGoalRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -48,6 +53,19 @@ class SyncWorker @AssistedInject constructor(
                             bookRepository.deleteBook(deleteBook.id, true)
                         } catch (e: Exception){
                             Log.e("SyncWorker", "Kitap silme senkronizasyon hatası: ${e.message}")
+                        }
+                    }
+                }
+
+                val unSyncedGoals = monthlyGoalDao.getUnsyncedGoals()
+                unSyncedGoals.forEach { goalEntity ->
+                    launch {
+                        try{
+                            val goal = goalEntity.toMonthlyGoal()
+                            monthlyGoalRepository.saveMonthlyGoal(goal.goalCount, true)
+                            monthlyGoalDao.updateMonthlyGoal(goal.id, true)
+                        } catch (e: Exception){
+                            Log.e("SyncWorker", "Aylık hedef senkronizasyon hatası: ${e.message}")
                         }
                     }
                 }
