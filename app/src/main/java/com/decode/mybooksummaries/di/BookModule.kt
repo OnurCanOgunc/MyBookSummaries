@@ -7,8 +7,10 @@ import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.domain.usecase.book.AddBookUseCase
 import com.decode.mybooksummaries.domain.usecase.book.DeleteBookUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetBookByIdUseCase
+import com.decode.mybooksummaries.domain.usecase.book.GetBooksReadThisMonthUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetSearchBooksUseCase
+import com.decode.mybooksummaries.domain.usecase.book.GetTotalBooksReadUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
@@ -39,7 +41,9 @@ object BookModule {
         getBooks = GetBooksUseCase(repository),
         getBookById = GetBookByIdUseCase(repository),
         getSearchBooks = GetSearchBooksUseCase(repository),
-        deleteBook = DeleteBookUseCase(repository)
+        deleteBook = DeleteBookUseCase(repository),
+        getTotalBooksRead = GetTotalBooksReadUseCase(repository),
+        getBooksReadThisMonth = GetBooksReadThisMonthUseCase(repository)
     )
 
     @Provides

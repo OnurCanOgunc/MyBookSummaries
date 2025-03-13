@@ -43,6 +43,12 @@ interface BookDao {
     @Query("UPDATE books SET isDeleted = 1 WHERE id = :bookId")
     suspend fun markBookAsDeleted(bookId: String)
 
+    @Query("SELECT COUNT(*) FROM books WHERE readingStatus = 'Read'")
+    suspend fun getTotalBooksRead(): Int
+
+    @Query("SELECT COUNT(*) FROM books WHERE readingStatus = 'Read' AND finishedReadingDate >= :startOfMonth")
+    suspend fun getBooksReadThisMonth(startOfMonth: Long): Int
+
     @Query("DELETE FROM books")
     suspend fun deleteAllBooks()
 }
