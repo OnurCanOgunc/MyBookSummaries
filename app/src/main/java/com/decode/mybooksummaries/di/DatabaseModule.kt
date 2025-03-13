@@ -3,6 +3,7 @@ package com.decode.mybooksummaries.di
 import android.content.Context
 import androidx.room.Room
 import com.decode.mybooksummaries.data.local.dao.BookDao
+import com.decode.mybooksummaries.data.local.dao.QuoteDao
 import com.decode.mybooksummaries.data.local.db.BookDatabase
 import dagger.Module
 import dagger.Provides
@@ -28,5 +29,11 @@ object DatabaseModule {
             BookDatabase::class.java,
             "books_database"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideQuoteDao(bookDatabase: BookDatabase): QuoteDao {
+        return bookDatabase.quoteDao()
     }
 }
