@@ -12,9 +12,13 @@ import com.decode.mybooksummaries.presentation.addbook.AddBookScreen
 import com.decode.mybooksummaries.presentation.addbook.AddBookViewModel
 import com.decode.mybooksummaries.presentation.detail.DetailScreen
 import com.decode.mybooksummaries.presentation.detail.DetailViewModel
+import com.decode.mybooksummaries.presentation.edit_profile.EditProfileScreen
+import com.decode.mybooksummaries.presentation.edit_profile.EditProfileViewModel
 import com.decode.mybooksummaries.presentation.home.HomeScreen
 import com.decode.mybooksummaries.presentation.home.HomeViewModel
 import com.decode.mybooksummaries.presentation.navigation.Screens
+import com.decode.mybooksummaries.presentation.profile.ProfileScreen
+import com.decode.mybooksummaries.presentation.profile.ProfileViewModel
 
 fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     navigation<Screens.Main>(startDestination = Screens.Main.Home) {
@@ -27,7 +31,8 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 onAction = viewModel::onAction,
                 uiEffect = uiEffect,
                 onAddClick = { navController.navigate(Screens.Main.AddBook()) },
-                onDetailClick = { navController.navigate(Screens.Main.BookDetail(it))}
+                onDetailClick = { navController.navigate(Screens.Main.BookDetail(it))},
+                onProfileClick = { navController.navigate(Screens.Main.Profile) }
             )
         }
         composable<Screens.Main.AddBook> {
@@ -56,6 +61,39 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 onAddBookClick = {
                     navController.navigate(Screens.Main.AddBook(it))
                 })
+        }
+        composable<Screens.Main.Profile> {
+            val viewModel = hiltViewModel<ProfileViewModel>()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            ProfileScreen(
+                uiState = uiState,
+                uiEffect = uiEffect,
+                onAction = viewModel::onAction,
+                onNavigateWelcome = {
+                    navController.navigate(Screens.Auth.Welcome) {
+                        popUpTo(Screens.Main) {
+                            inclusive = true
+                        }
+                    }
+                }
+                ,
+                onEditProfileClick = {
+                    navController.navigate(Screens.Main.EditProfile)
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable<Screens.Main.EditProfile> {
+            val viewModel = hiltViewModel<EditProfileViewModel>()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            EditProfileScreen(
+                uiState = uiState,
+                uiEffect = uiEffect,
+                onAction = viewModel::onAction,
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }

@@ -14,6 +14,10 @@ sealed interface Screens {
         data class AddBook(val bookId: String? = null)
         @Serializable
         data class BookDetail(val bookId: String)
+        @Serializable
+        data object Profile
+        @Serializable
+        data object EditProfile
     }
 
     @Serializable
