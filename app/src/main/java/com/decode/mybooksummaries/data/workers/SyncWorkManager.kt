@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.data.workers
 
-import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -24,6 +23,5 @@ class SyncWorkManager @Inject constructor(
             ExistingWorkPolicy.REPLACE,
             syncRequest
         )
-        Log.d("SyncWorkManager", "Tek seferlik senkronizasyon başlatıldı")
     }
 }

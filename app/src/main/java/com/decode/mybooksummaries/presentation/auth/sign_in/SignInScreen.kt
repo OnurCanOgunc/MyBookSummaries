@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -81,7 +82,9 @@ fun SignInScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize().background(HomeBackgroundColor2)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(HomeBackgroundColor2)) {
         Image(
             painter = painterResource(R.drawable.background),
             contentScale = ContentScale.Crop,
@@ -91,7 +94,7 @@ fun SignInScreen(
         IconButton(onClick = { onAction(UiAction.OnBackClick) }, modifier = Modifier.padding(top = 24.dp, start = 16.dp)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = Color.Black
             )
         }
@@ -128,14 +131,14 @@ fun SignInScreen(
 fun SignInHeader() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Merhaba",
+            text = stringResource(R.string.hello),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Seni Tekrar Gördüğümüze Memnun Olduk!",
+            text = stringResource(R.string.glad_to_see_you_again),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 16.sp
         )
@@ -148,7 +151,7 @@ fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.email,
             onValueChange = { onAction(UiAction.OnEmailChange(it)) },
-            label = "Eposta Adresi",
+            label = stringResource(R.string.email_address),
             keyboardType = KeyboardType.Email,
             icon = Icons.Outlined.Email
         )
@@ -157,7 +160,7 @@ fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.password,
             onValueChange = { onAction(UiAction.OnPasswordChange(it)) },
-            label = "Şifre",
+            label = stringResource(R.string.password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
             passwordVisibility = uiState.passwordVisibility,
@@ -166,7 +169,7 @@ fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Şifremi Unuttum",
+            text = stringResource(R.string.forgot_password),
             modifier = Modifier
                 .align(Alignment.End)
                 .clickable { onAction(UiAction.OnResetPasswordClick) },
@@ -186,7 +189,7 @@ fun SignInButton(onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
     ) {
-        Text("Giriş Yap", color = Color.White)
+        Text(stringResource(R.string.sign_in), color = Color.White)
     }
 }
 
@@ -200,12 +203,12 @@ fun SignInFooter(modifier: Modifier,onSignUpClick: () -> Unit) {
             .padding(bottom = 24.dp)
     ) {
         Text(
-            text = "Hesabın yok mu?",
+            text = stringResource(R.string.no_account),
             color = Color.Black.copy(alpha = 0.8f)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = "Hesap Oluştur",
+            text = stringResource(R.string.create_account),
             color = Color(0xFF4CAF50),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable { onSignUpClick() }
@@ -248,17 +251,17 @@ fun ForgotPasswordSheet(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Şifreni mi Unuttun?", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.forgot_password), fontSize = 22.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Lütfen kayıtlı e-posta adresini gir, sana şifre sıfırlama bağlantısı göndereceğiz.",
+            text = stringResource(R.string.reset_password),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         CustomOutlinedTextField(
             value = resetEmail,
             onValueChange = onEmailChange,
-            label = "Email",
+            label = stringResource(R.string.email_address),
             keyboardType = KeyboardType.Email,
             icon = Icons.Outlined.Email
         )
@@ -269,11 +272,11 @@ fun ForgotPasswordSheet(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
         ) {
-            Text("Şifreyi Sıfırla", color = Color.White)
+            Text(stringResource(R.string.reset_password), color = Color.White)
         }
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(onClick = onDismiss) {
-            Text("İptal", color = Color.Red)
+            Text(stringResource(R.string.cancel), color = Color.Red)
         }
     }
 }

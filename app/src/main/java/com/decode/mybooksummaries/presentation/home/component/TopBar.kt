@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +46,7 @@ fun TopBar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "BookSum",
+                text = stringResource(R.string.booksum),
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -58,7 +60,7 @@ fun TopBar(
                 IconButton(onClick = onAddClick) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Kitap Ekle",
+                        contentDescription = stringResource(R.string.add_book),
                         tint = Color.White
                     )
                 }
@@ -66,7 +68,7 @@ fun TopBar(
                 IconButton(onClick = onProfileClick) {
                     Icon(
                         imageVector = Icons.Outlined.Person,
-                        contentDescription = "Profil",
+                        contentDescription = stringResource(R.string.profile),
                         tint = Color.White
                     )
                 }

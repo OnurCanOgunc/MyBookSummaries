@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.presentation.edit_profile.EditProfileContract.UiAction
 import com.decode.mybooksummaries.presentation.edit_profile.EditProfileContract.UiState
 
@@ -20,7 +22,7 @@ fun ReadingGoalSlider(uiState: UiState, onAction: (UiAction) -> Unit) {
     Spacer(modifier = Modifier.height(8.dp))
 
     Column {
-        Text("Monthly Book Goal: ${uiState.monthlyBookGoal}", color = Color.White, style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.monthly_book_goal, uiState.monthlyBookGoal), color = Color.White, style = MaterialTheme.typography.bodyMedium)
         Slider(
             value = uiState.monthlyBookGoal.toFloat(),
             onValueChange = { onAction(UiAction.OnMonthlyBookGoalChange(it.toInt())) },

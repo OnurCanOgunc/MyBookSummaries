@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.HomeTextColor
 import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
@@ -66,7 +67,7 @@ fun BookItem(
     ) {
         AsyncImage(
             model = bitmap.value?: R.drawable.img,
-            contentDescription = "Kitap Resmi",
+            contentDescription = stringResource(R.string.book_image),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()

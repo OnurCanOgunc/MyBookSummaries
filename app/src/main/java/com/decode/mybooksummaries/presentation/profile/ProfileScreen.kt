@@ -34,9 +34,11 @@ import com.decode.mybooksummaries.presentation.profile.component.ReadingStatisti
 import kotlinx.coroutines.flow.Flow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
 import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
 import com.decode.mybooksummaries.presentation.profile.component.ProfileImage
+import com.decode.mybooksummaries.R
 
 @Composable
 fun ProfileScreen(
@@ -68,7 +70,7 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             IconButton(onClick = {onBackClick()},modifier = Modifier.padding(top = 34.dp,start = 16.dp)) {
-                Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back",tint = Color.White)
+                Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = stringResource(R.string.back),tint = Color.White)
             }
         },
         bottomBar = {
@@ -79,7 +81,7 @@ fun ProfileScreen(
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = SearchBarContainerColor)
             ) {
-                Text(text = "Sign Out", color = Color.White)
+                Text(text = stringResource(R.string.sign_out), color = Color.White)
             }
         }
     ) { contentPadding ->
@@ -140,7 +142,7 @@ fun ProfileHeader(
             modifier = Modifier.fillMaxWidth(0.5f),
             colors = ButtonDefaults.buttonColors(containerColor = SearchBarContainerColor)
         ) {
-            Text(text = "Edit Profile")
+            Text(text = stringResource(R.string.edit_profile))
         }
     }
 }

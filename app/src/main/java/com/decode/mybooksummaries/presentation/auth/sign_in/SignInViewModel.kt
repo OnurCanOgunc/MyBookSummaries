@@ -53,7 +53,7 @@ class SignInViewModel @Inject constructor(
                     updateUiState {
                         copy(
                             isLoading = false,
-                            message = "Şifre sıfırlama e-postası gönderildi."
+                            message = "Password reset email has been sent."
                         )
                     }
                 }

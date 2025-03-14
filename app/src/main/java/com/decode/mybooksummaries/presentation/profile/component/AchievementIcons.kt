@@ -18,15 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.R
 
 @Composable
 fun AchievementIcons(icons: List<ImageVector>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Recent Achievements",
+            text = stringResource(R.string.recent_achievements),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -44,7 +46,7 @@ fun AchievementIcons(icons: List<ImageVector>, modifier: Modifier = Modifier) {
                         .background(Color(0xFF282846)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(imageVector = icon, contentDescription = "Achievement", tint = Color.White)
+                    Icon(imageVector = icon, contentDescription = stringResource(R.string.achievement), tint = Color.White)
                 }
             }
         }

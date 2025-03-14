@@ -27,7 +27,7 @@ class SyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        Log.d("SyncWorker", "doWork() called - Senkronizasyon başlıyor")
+        Log.d("SyncWorker", "doWork() called - Synchronization begins")
         return try {
             supervisorScope {
 
@@ -39,7 +39,7 @@ class SyncWorker @AssistedInject constructor(
                             bookRepository.addBook(book, true)
                             bookDao.updateBookSyncStatus(book.id)
                         } catch (e: Exception){
-                            Log.e("SyncWorker", "Kitap senkronizasyon hatası: ${e.message}")
+                            Log.e("SyncWorker", "Book sync error: ${e.message}")
                         }
                     }
                 }
@@ -52,7 +52,7 @@ class SyncWorker @AssistedInject constructor(
                             val deleteBook = bookEntity.toBook()
                             bookRepository.deleteBook(deleteBook.id, true)
                         } catch (e: Exception){
-                            Log.e("SyncWorker", "Kitap silme senkronizasyon hatası: ${e.message}")
+                            Log.e("SyncWorker", "Book deletion sync error: ${e.message}")
                         }
                     }
                 }
@@ -65,16 +65,16 @@ class SyncWorker @AssistedInject constructor(
                             monthlyGoalRepository.saveMonthlyGoal(goal.goalCount, true)
                             monthlyGoalDao.updateMonthlyGoal(goal.id, true)
                         } catch (e: Exception){
-                            Log.e("SyncWorker", "Aylık hedef senkronizasyon hatası: ${e.message}")
+                            Log.e("SyncWorker", "Monthly target synchronization error: ${e.message}")
                         }
                     }
                 }
             }
 
-            Log.d("SyncWorker", "Senkronizasyon tamamlandı")
+            Log.d("SyncWorker", "Synchronization completed")
             Result.success()
         } catch (e: Exception) {
-            Log.e("SyncWorker", "Genel senkronizasyon hatası: ${e.message}")
+            Log.e("SyncWorker", "synchronization error: ${e.message}")
             Result.retry()
         }
     }

@@ -34,10 +34,10 @@ class MainViewModel @Inject constructor(
                     val monthlyGoals = db.monthlyGoalDao().getUnsyncedGoals().isNotEmpty()
                     Log.d("SyncViewModel", "$deletedUnsyncedBooks")
                     if (unsyncedBooks || deletedUnsyncedBooks || monthlyGoals) {
-                        Log.d("SyncViewModel", "İnternet geldi, senkronizasyon başlatılıyor")
+                        Log.d("SyncViewModel", "Internet is here, synchronization is starting")
                         syncWorkManager.startOneTimeSync()
                     } else {
-                        Log.d("SyncViewModel", "Senkronize edilecek veri yok")
+                        Log.d("SyncViewModel", "No data to sync")
                     }
                 }
             }

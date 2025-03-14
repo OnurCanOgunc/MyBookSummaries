@@ -20,7 +20,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.components.CustomOutlinedTextField
 import com.decode.mybooksummaries.core.ui.components.TopBar
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
@@ -50,7 +52,7 @@ fun EditProfileScreen(
             .padding(16.dp)
     ) {
         TopBar(
-            title = "Edit Profile",
+            title = stringResource(R.string.edit_profile),
             popBackStack = { onAction(UiAction.OnBackClick) })
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -76,12 +78,12 @@ private fun PasswordChange(
     uiState: UiState,
     onAction: (UiAction) -> Unit
 ) {
-    Text("Change Password", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
+    Text(stringResource(R.string.change_password), style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
     Spacer(modifier = Modifier.height(8.dp))
     CustomOutlinedTextField(
         value = uiState.currentPassword,
         onValueChange = { onAction(UiAction.OnCurrentPasswordChange(it)) },
-        label = "Current Password",
+        label = stringResource(R.string.current_password),
         isPassword = true,
         passwordVisibility = uiState.passwordVisibilityCurrent,
         onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityCurrentClick) },
@@ -105,7 +107,7 @@ private fun PasswordChange(
     CustomOutlinedTextField(
         value = uiState.newPassword,
         onValueChange = { onAction(UiAction.OnNewPasswordChange(it)) },
-        label = "New Password",
+        label = stringResource(R.string.new_password),
         isPassword = true,
         passwordVisibility = uiState.passwordVisibilityNew,
         onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityNewClick) },
@@ -135,13 +137,13 @@ fun ActionButtons(onAction: (UiAction) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         OutlinedButton(onClick = { onAction(UiAction.OnBackClick) }) {
-            Text("Cancel", color = Color.White)
+            Text(stringResource(R.string.cancel), color = Color.White)
         }
         Button(
             onClick = { onAction(UiAction.OnSaveClick) },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
         ) {
-            Text("Save Changes", color = Color.White)
+            Text(stringResource(R.string.save_changes), color = Color.White)
         }
     }
 }

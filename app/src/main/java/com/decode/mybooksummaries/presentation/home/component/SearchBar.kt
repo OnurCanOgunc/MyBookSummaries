@@ -19,9 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
 
 @Composable
@@ -38,7 +40,7 @@ fun SearchBar(
         value = searchText,
         shape = RoundedCornerShape(12.dp),
         onValueChange = updateSearchQuery,
-        placeholder = { Text("Kitap Ara...") },
+        placeholder = { Text(stringResource(R.string.search_books)) },
         modifier = modifier
             .fillMaxWidth(),
         leadingIcon = {
@@ -49,7 +51,7 @@ fun SearchBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = stringResource(R.string.search)
                 )
             }
         },
@@ -77,7 +79,7 @@ fun SearchBar(
                             )
                         },
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear Icon"
+                        contentDescription = stringResource(R.string.clear_icon)
                     )
                 }
             }

@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -74,7 +75,9 @@ fun SignUpScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize().background(HomeBackgroundColor2)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(HomeBackgroundColor2)) {
         Image(
             painter = painterResource(R.drawable.background),
             contentDescription = null,
@@ -87,7 +90,7 @@ fun SignUpScreen(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = Color.Black
             )
         }
@@ -102,7 +105,7 @@ fun SignUpScreen(
         ) {
             SignUpHeader()
             SignUpFields(uiState, onAction)
-            if (!uiState.message.isNullOrEmpty()) {
+            uiState.message?.let {
                 AnimatedVisibility(visible = true) {
                     Text(
                         text = uiState.message,
@@ -122,14 +125,14 @@ fun SignUpScreen(
 fun SignUpHeader() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Hoşgeldin",
+            text = stringResource(R.string.welcome),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Keşfetmeye Başlayın!",
+            text = stringResource(R.string.start_exploring),
             fontSize = 18.sp,
             color = Color.DarkGray
         )
@@ -142,7 +145,7 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.username,
             onValueChange = { onAction(UiAction.OnUsernameChange(it)) },
-            label = "Kullanıcı Adı",
+            label = stringResource(R.string.username),
             icon = Icons.Outlined.Person
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -150,7 +153,7 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.email,
             onValueChange = { onAction(UiAction.OnEmailChange(it)) },
-            label = "Eposta adresi",
+            label = stringResource(R.string.email_address),
             keyboardType = KeyboardType.Email,
             icon = Icons.Outlined.Email
         )
@@ -159,7 +162,7 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.password,
             onValueChange = { onAction(UiAction.OnPasswordChange(it)) },
-            label = "Şifre",
+            label = stringResource(R.string.password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
             passwordVisibility = uiState.passwordVisible1,
@@ -170,7 +173,7 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
         CustomOutlinedTextField(
             value = uiState.passwordAgain,
             onValueChange = { onAction(UiAction.OnPasswordAgainChange(it)) },
-            label = "Şifreyi Tekrarla",
+            label = stringResource(R.string.repeat_password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
             passwordVisibility = uiState.passwordVisible2,
@@ -197,7 +200,7 @@ fun SignUpButton(uiState: UiState, onAction: (UiAction) -> Unit) {
         if (uiState.isLoading) {
             CircularProgressIndicator(color = Color.White)
         } else {
-            Text("Hesap Oluştur", color = Color.White)
+            Text(stringResource(R.string.create_account), color = Color.White)
         }
     }
 }
@@ -212,12 +215,12 @@ fun SignUpFooter(modifier: Modifier, onLoginClick: () -> Unit) {
             .padding(bottom = 24.dp)
     ) {
         Text(
-            text = "Hesabın zaten var mı?",
+            text = stringResource(R.string.already_have_an_account),
             color = Color.Black.copy(alpha = 0.8f)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = "Giriş Yap",
+            text = stringResource(R.string.sign_in),
             color = Color(0xFF4CAF50),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable { onLoginClick() }

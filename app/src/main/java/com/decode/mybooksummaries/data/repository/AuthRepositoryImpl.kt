@@ -49,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
                     auth.currentUser?.updateProfile(profileUpdate)
                         ?.addOnCompleteListener { updateTask ->
                             if (!updateTask.isSuccessful) {
-                                Log.e(updateTask.exception?.message, "Profil güncelleme hatası")
+                                Log.e(updateTask.exception?.message, "Profile update error")
                             }
                         }
                     trySend(AuthResponse.Success)
@@ -60,7 +60,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
             awaitClose()
         }.catch { e ->
-            Log.e(e.message, "Kayıt sırasında beklenmedik hata")
+            Log.e(e.message, "Unexpected error while registering")
             emit(AuthResponse.Failure(context.getString(R.string.error_unknown)))
         }
 
@@ -77,7 +77,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
             awaitClose()
         }.catch { e ->
-            Log.e(e.message, "Giriş sırasında beklenmedik hata")
+            Log.e(e.message, "Unexpected error during login")
             emit(AuthResponse.Failure(context.getString(R.string.error_unknown)))
         }
 
@@ -100,11 +100,12 @@ class AuthRepositoryImpl @Inject constructor(
         }
         awaitClose()
     }.catch { e ->
-        Log.e(e.message, "Google ile giriş sırasında beklenmedik hata")
+        Log.e(e.message, "Unexpected error while signing in with Google!")
         emit(AuthResponse.Failure(context.getString(R.string.error_unknown)))
     }
 
     private suspend fun getGoogleIdToken(): String? {
+
         return try {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
@@ -127,7 +128,7 @@ class AuthRepositoryImpl @Inject constructor(
                 null
             }
         } catch (e: Exception) {
-            Log.e("GoogleAuth", "Kimlik doğrulama hatası: ${e.message}")
+            Log.e("GoogleAuth", "Authentication error: ${e.message}")
             null
         }
     }

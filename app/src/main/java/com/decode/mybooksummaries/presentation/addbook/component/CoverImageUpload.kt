@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import com.decode.mybooksummaries.R
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun CoverImageUpload(
@@ -38,8 +39,9 @@ fun CoverImageUpload(
 
     Image(
         painter = painter,
-        contentDescription = "Book Cover",
-        modifier = Modifier.height(180.dp)
+        contentDescription = stringResource(R.string.book_cover),
+        modifier = Modifier
+            .height(180.dp)
             .width(160.dp)
             .border(1.dp, Color.Yellow, RoundedCornerShape(14.dp))
             .clip(RoundedCornerShape(14.dp))

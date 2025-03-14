@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
 
 
@@ -31,7 +33,7 @@ fun ReadingStatistics(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Reading Statistics",
+            text = stringResource(R.string.reading_statistics),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -43,8 +45,8 @@ fun ReadingStatistics(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            StatisticCard(value = booksRead, title = "Books Read")
-            StatisticCard(value = booksReadThisMonth, title = "This Month")
+            StatisticCard(value = booksRead, title = stringResource(R.string.books_read))
+            StatisticCard(value = booksReadThisMonth, title = stringResource(R.string.this_month))
         }
 
     }

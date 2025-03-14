@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,7 +56,9 @@ fun WelcomeScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(HomeBackgroundColor2)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(HomeBackgroundColor2)) {
         Image(
             painter = painterResource(id = R.drawable.background),
             contentDescription = null,
@@ -63,7 +66,9 @@ fun WelcomeScreen(
             contentScale = ContentScale.Crop
         )
         if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp))
+            CircularProgressIndicator(modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 20.dp))
         }
 
         Column(
@@ -75,7 +80,7 @@ fun WelcomeScreen(
             LogoHeader()
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Kitaplarınızı yönetin, özetler ve alıntılar ekleyin.",
+                text = stringResource(R.string.manage_books_summaries_quotes),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.DarkGray,
                 fontSize = 16.sp,
@@ -106,7 +111,7 @@ fun LogoHeader() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "BookNest",
+            text = stringResource(R.string.booknest),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -118,7 +123,7 @@ fun LogoHeader() {
 fun LoginButtons(onAction: (UiAction) -> Unit) {
     CustomButton(
         painter = painterResource(id = R.drawable.google),
-        title = "Google ile Giriş Yap",
+        title = stringResource(R.string.sign_in_with_google),
         backgroundColor = Color(0xFF4CAF50),
         onClick = { onAction(UiAction.OnLoginWithGoogleClick) }
     )
@@ -131,7 +136,7 @@ fun LoginButtons(onAction: (UiAction) -> Unit) {
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Black)
         Text(
-            text = "  veya  ",
+            text = stringResource(R.string.or),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black
         )
@@ -142,7 +147,7 @@ fun LoginButtons(onAction: (UiAction) -> Unit) {
 
     CustomButton(
         painter = painterResource(id = R.drawable.email),
-        title = "E-posta ile Giriş Yap",
+        title = stringResource(R.string.sign_in_with_email),
         backgroundColor = EmailButtonColor,
         onClick = { onAction(UiAction.OnLoginClick) }
     )
@@ -155,14 +160,14 @@ fun SignUpFooter(onSignUpClick: () -> Unit) {
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Hesabınız Yok mu?",
+            text = stringResource(R.string.no_account),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.DarkGray,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = " Kayıt Ol",
+            text = stringResource(R.string.sign_up),
             color = Color(0xFF4CAF50),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,

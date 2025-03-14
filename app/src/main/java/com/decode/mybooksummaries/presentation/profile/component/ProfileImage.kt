@@ -19,6 +19,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.decode.mybooksummaries.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import com.decode.mybooksummaries.presentation.profile.ProfileImageState
 
 @Composable
@@ -46,7 +47,7 @@ fun ProfileImage(
 
         Image(
             painter = painter,
-            contentDescription = "Profile Image",
+            contentDescription = stringResource(R.string.profile_image),
             modifier = Modifier
                 .fillMaxSize()
                 .clip(CircleShape),

@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.R
 
 @Composable
 fun MinimalDropdownMenu(
@@ -31,7 +33,7 @@ fun MinimalDropdownMenu(
             .padding(16.dp)
     ) {
         IconButton(onClick = onMoveCartClick ) {
-            Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = Color.White)
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options), tint = Color.White)
         }
         DropdownMenu(
             expanded = expanded,
@@ -40,14 +42,14 @@ fun MinimalDropdownMenu(
             DropdownMenuItem(
                 text = { Text("Edit", fontSize = 14.sp) },
                 trailingIcon = {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit",modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit),modifier = Modifier.size(20.dp))
                 },
                 onClick = onEditClick,
             )
             DropdownMenuItem(
                 text = { Text("Delete Book",fontSize = 14.sp) },
                 trailingIcon = {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete), modifier = Modifier.size(20.dp))
                 },
                 onClick = onDeleteClick
             )

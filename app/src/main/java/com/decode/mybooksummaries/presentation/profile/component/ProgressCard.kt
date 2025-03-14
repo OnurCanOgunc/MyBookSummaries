@@ -14,10 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
 
 @Composable
@@ -45,7 +47,7 @@ fun ProgressCard(
     ) {
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Monthly Goal",
+            text = stringResource(R.string.monthly_goal),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.White,

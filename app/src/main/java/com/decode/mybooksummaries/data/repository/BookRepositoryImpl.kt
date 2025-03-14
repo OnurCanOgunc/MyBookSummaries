@@ -38,7 +38,6 @@ class BookRepositoryImpl @Inject constructor(
 
     override fun getBooks(isConnected: Boolean) = callbackFlow {
         if (isConnected) {
-            Log.d("1BookRepositoryImpl", "İnternet bağlantısı mevcut Firstore,GetBooks")
             val listener = booksRef.orderBy("title").addSnapshotListener { snapshot, error ->
                 error?.let {
                     trySend(Response.Failure(it.message ?: "Error getting books")).isSuccess
@@ -55,7 +54,6 @@ class BookRepositoryImpl @Inject constructor(
             }
             awaitClose { listener.remove() }
         } else {
-            Log.d("1BookRepositoryImpl", "İnternet bağlantısı yok, SQLİYE")
             bookDao.getAllBooks()
                 .map { books ->
                     if (books.isNotEmpty()) {

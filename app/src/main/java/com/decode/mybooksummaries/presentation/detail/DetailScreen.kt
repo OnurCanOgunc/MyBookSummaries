@@ -64,6 +64,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -114,7 +115,9 @@ fun DetailScreen(
         modifier = Modifier,
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 18.dp, start = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 18.dp, start = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -236,7 +239,7 @@ fun Header(
             )
 
             Text(
-                text = "Started: $startedDate",
+                text = stringResource(R.string.started, startedDate),
                 fontSize = 14.sp,
                 color = Color.LightGray
             )
@@ -266,7 +269,7 @@ fun Header(
 fun BookPage(currentPage: String, pageCount: String) {
     Column {
         Text(
-            text = "Reading Progress",
+            text = stringResource(R.string.reading_progress),
             fontSize = 14.sp,
             color = Color.Gray
         )
@@ -286,7 +289,7 @@ fun BookPage(currentPage: String, pageCount: String) {
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "$currentPage / $pageCount pages",
+            text = stringResource(R.string.pages, currentPage, pageCount),
             fontSize = 12.sp,
             color = Color.LightGray,
             modifier = Modifier.align(Alignment.End)
@@ -316,7 +319,7 @@ fun BookSummary(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Summary",
+                    text = stringResource(R.string.summary),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -333,7 +336,7 @@ fun BookSummary(
                     onClick = { onReadMoreClick(true) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Read More >")
+                    Text(stringResource(R.string.read_more))
                 }
             }
         }
@@ -392,7 +395,7 @@ fun FavoriteQuotes(
             .padding(horizontal = 12.dp)
     ) {
         Text(
-            text = "Favorite Quotes",
+            text = stringResource(R.string.favorite_quotes),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -405,7 +408,7 @@ fun FavoriteQuotes(
             OutlinedTextField(
                 value = quote,
                 onValueChange = onQuoteChange,
-                label = { Text("Add a quote...") },
+                label = { Text(stringResource(R.string.add_a_quote)) },
                 modifier = Modifier
                     .weight(1f),
                 shape = RoundedCornerShape(12.dp),

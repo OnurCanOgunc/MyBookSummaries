@@ -70,7 +70,7 @@ class SignUpViewModel @Inject constructor(
         val passwordAgain = uiState.value.passwordAgain
 
         if (password != passwordAgain) {
-            updateUiState { copy(isLoading = false, message = "Şifreler Eşleşmiyor") }
+            updateUiState { copy(isLoading = false, message = "Passwords Do Not Match") }
             return@launch
         }
 

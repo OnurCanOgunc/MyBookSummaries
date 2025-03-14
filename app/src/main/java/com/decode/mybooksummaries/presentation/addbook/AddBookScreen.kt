@@ -30,6 +30,7 @@ import com.decode.mybooksummaries.presentation.addbook.component.DropdownField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import com.decode.mybooksummaries.presentation.addbook.AddBookContract.UiAction
@@ -45,6 +46,7 @@ import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor
 import com.decode.mybooksummaries.presentation.addbook.utils.uriToBase64
 import com.decode.mybooksummaries.presentation.addbook.utils.uriToBitmap
 import kotlinx.coroutines.flow.Flow
+import com.decode.mybooksummaries.R
 
 @Composable
 fun AddBookScreen(
@@ -75,7 +77,7 @@ fun AddBookScreen(
         topBar = {
             TopBar(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
-                title = if (bookId == null) "Add Book" else "Edit Book",
+                title = if (bookId == null) stringResource(R.string.add_book) else stringResource(R.string.edit_book),
                 popBackStack = { onAction(UiAction.OnBackClick) })
         }
     ) { paddingValues ->
@@ -119,7 +121,7 @@ fun AddBookScreen(
             )
 
             DropdownField(
-                label = "Genre",
+                label = stringResource(R.string.genre),
                 selectedItem = uiState.genre,
                 onItemSelected = { onAction(UiAction.OnGenreChange(it)) }
             )
@@ -141,7 +143,7 @@ private fun BookSummary(
 ) {
     Column {
         Text(
-            text = "Summary",
+            text = stringResource(R.string.summary),
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(bottom = 4.dp),
             color = Color.White
@@ -176,11 +178,11 @@ private fun BookDate(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.START_DATE)) }) {
-            val formattedDate = uiState.startedReadingDate?.timestampToString() ?: "Started Date"
+            val formattedDate = uiState.startedReadingDate?.timestampToString() ?: stringResource(R.string.started_date)
             Text(text = formattedDate)
         }
         Button(onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.FINISH_DATE)) }) {
-            val formattedDate = uiState.finishedReadingDate?.timestampToString() ?: "Finished Date"
+            val formattedDate = uiState.finishedReadingDate?.timestampToString() ?: stringResource(R.string.finished_date)
             Text(text = formattedDate)
         }
     }
@@ -220,19 +222,19 @@ fun BookInfoFields(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         InputField(
-            label = "Book Title",
+            label = stringResource(R.string.book_title),
             value = title,
             onValueChange = { onAction(UiAction.OnTitleChange(it)) })
         InputField(
-            label = "Author",
+            label = stringResource(R.string.author),
             value = author,
             onValueChange = { onAction(UiAction.OnAuthorChange(it)) })
         InputField(
-            label = "Total Pages",
+            label = stringResource(R.string.total_pages),
             value = pageCount,
             onValueChange = { onAction(UiAction.OnPageCountChange(it)) })
         InputField(
-            label = "Current Pages",
+            label = stringResource(R.string.current_pages),
             value = currentPage,
             onValueChange = { onAction(UiAction.OnCurrentPageChange(it)) })
     }

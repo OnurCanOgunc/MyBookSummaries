@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.decode.mybooksummaries.R
@@ -48,7 +49,7 @@ fun AvatarSelectionDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Profil Resmi Seç", style = MaterialTheme.typography.titleMedium.copy(Color.White))
+            Text(stringResource(R.string.select_profile_picture), style = MaterialTheme.typography.titleMedium.copy(Color.White))
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -59,7 +60,7 @@ fun AvatarSelectionDialog(
                 items(avatarResIds) { avatar ->
                     Image(
                         painter = painterResource(id = avatar),
-                        contentDescription = "Avatar",
+                        contentDescription = stringResource(R.string.avatar),
                         modifier = Modifier
                             .padding(8.dp)
                             .size(60.dp)

@@ -42,10 +42,10 @@ fun OnboardingScreen(onFinished: () -> Unit) {
     val buttonState = remember {
         derivedStateOf {
             when (pagerState.currentPage) {
-                0 -> mutableListOf("", "İleri")
-                1 -> mutableListOf("Geri", "İleri")
-                2 -> mutableListOf("Geri", "İleri")
-                3 -> mutableListOf("Geri", "Başla")
+                0 -> mutableListOf("", "Next")
+                1 -> mutableListOf("Back", "Next")
+                2 -> mutableListOf("Back", "Next")
+                3 -> mutableListOf("Back", "Start")
                 else -> mutableListOf("", "")
             }
         }
@@ -67,7 +67,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
         }) {
         Column(Modifier.padding(it)) {
             HorizontalPager(state = pagerState) { index ->
-                key(pages[index].title) { // Her sayfa için benzersiz bir anahtar
+                key(pages[index].title) {
                     OnboardingGraphUI(onboardingModel = pages[index])
                 }
             }

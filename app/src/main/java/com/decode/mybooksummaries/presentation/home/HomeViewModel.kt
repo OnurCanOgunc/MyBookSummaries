@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.decode.mybooksummaries.core.network.ConnectivityObserver
 import com.decode.mybooksummaries.core.ui.viewmodel.BaseViewModel
@@ -59,7 +58,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             updateUiState { copy(isLoading = true, books = emptyList()) }
             isConnected.collectLatest { connected ->
-                Log.d("1HomeViewModel", "İnternet durumu değişti: $connected")
                 bookUseCase.getBooks(connected).collect { response ->
                     when (response) {
                         is Response.Success -> {

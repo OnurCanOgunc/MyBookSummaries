@@ -44,7 +44,7 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
             }
             Response.Success(Unit)
         } catch (e: Exception) {
-            Response.Failure(e.message ?: "Aylık hedef kaydedilirken hata oluştu")
+            Response.Failure(e.message ?: "Error occurred while saving monthly target")
         }
     }
 
