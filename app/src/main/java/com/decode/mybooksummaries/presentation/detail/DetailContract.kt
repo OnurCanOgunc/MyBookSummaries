@@ -6,11 +6,13 @@ import com.decode.mybooksummaries.domain.model.Quote
 object DetailContract {
     data class UiState(
         val book: Book = Book(),
-        val quoteModel: Quote? = Quote(),
+        val quoteModel: Quote = Quote(),
         val quotes: List<Quote> = emptyList(),
         val quote: String = "",
+        val bookStartDate: String = "",
+        val bookFinishDate: String = "",
         val isLoading: Boolean = false,
-        val error: String? = null,
+        val error: String = "",
         val expanded: Boolean = false
     )
     sealed interface UiAction {
@@ -22,6 +24,7 @@ object DetailContract {
         data class QuoteChange(val quote: String): UiAction
         data class OnEditClick(val bookId: String) : UiAction
         data class OnDeleteClick(val bookId: String) : UiAction
+        data object OnMessageShown : UiAction
         data object OnDismissRequest : UiAction
         data object OnMoveCartClick : UiAction
     }

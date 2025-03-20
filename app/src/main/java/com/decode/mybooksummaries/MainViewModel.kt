@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.decode.mybooksummaries.core.network.ConnectivityObserver
 import com.decode.mybooksummaries.data.local.db.BookDatabase
-import com.decode.mybooksummaries.data.workers.SyncWorkManager
+import com.decode.mybooksummaries.data.worker.SyncWorkManager
 import com.decode.mybooksummaries.domain.usecase.auth.CurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

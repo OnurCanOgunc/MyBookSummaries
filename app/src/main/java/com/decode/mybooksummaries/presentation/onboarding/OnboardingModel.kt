@@ -10,22 +10,22 @@ sealed class OnboardingModel(
 ) {
     data object FirstPage: OnboardingModel(
         image = R.drawable.img1,
-        title = "Kitap Dünyanıza Hoş Geldiniz!",
-        description = "Kitaplarınızı zahmetsizce yönetin, özetler ve alıntılar ekleyin ve okuma deneyiminizi bir üst seviyeye taşıyın."
+        title = "Welcome to Your Book World!",
+        description = "Manage your books effortlessly, add summaries and quotes, and elevate your reading experience."
     )
     data object SecondPage: OnboardingModel(
         image = R.drawable.img2,
-        title = "Kitaplarınızı Kolayca Yönetin",
-        description = "Kitap kütüphanenizi oluşturun, kitaplarınızı kategorilere ayırın ve okunma durumlarını takip edin. Artık kitaplarınızı kaybetmeyin!"
+        title = "Manage Your Books Easily",
+        description = "Create your book library, categorize your books, and track their reading status. Never lose your books again!"
     )
     data object ThirdPage: OnboardingModel(
         image = R.drawable.img3,
-        title = "Özetler ve Alıntılar",
-        description = "Okuduğunuz kitapların özetlerini kaydedin ve en sevdiğiniz alıntıları saklayın. Bilgilere istediğiniz zaman kolayca erişin!"
+        title = "Summaries and Quotes",
+        description = "Save summaries of the books you've read and keep your favorite quotes. Access information easily anytime!"
     )
     data object FourthPage: OnboardingModel(
         image = R.drawable.img5,
-        title = "Hadi Başlayalım!",
-        description = "Kitap kütüphanenizi oluşturmaya hazır mısınız? 'Başla' butonuna tıklayın ve okuma deneyiminizi dönüştürün!"
+        title = "Let's Get Started!",
+        description = "Ready to build your book library? Click the 'Start' button and transform your reading experience!"
     )
 }

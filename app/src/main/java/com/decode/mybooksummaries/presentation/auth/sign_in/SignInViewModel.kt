@@ -18,8 +18,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val authUseCases: AuthUseCases,
     connectivityObserver: ConnectivityObserver
-) :
-    BaseViewModel<UiState, UiAction, UiEffect>(
+) : BaseViewModel<UiState, UiAction, UiEffect>(
         connectivityObserver,
         UiState()
     ) {

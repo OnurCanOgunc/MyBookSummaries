@@ -1,12 +1,11 @@
-package com.decode.mybooksummaries.data.workers
+package com.decode.mybooksummaries.data.worker
 
 import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.decode.mybooksummaries.data.local.dao.BookDao
-import com.decode.mybooksummaries.data.local.dao.MonthlyGoalDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toBook
 import com.decode.mybooksummaries.data.mapper.toMonthlyGoal
 import com.decode.mybooksummaries.domain.repository.BookRepository
@@ -20,10 +19,9 @@ import kotlinx.coroutines.supervisorScope
 class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val bookDao: BookDao,
+    private val db: BookDatabase,
     private val bookRepository: BookRepository,
-    private val monthlyGoalDao: MonthlyGoalDao,
-    private val monthlyGoalRepository: MonthlyGoalRepository
+    private val monthlyGoalRepository: MonthlyGoalRepository,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -31,13 +29,13 @@ class SyncWorker @AssistedInject constructor(
         return try {
             supervisorScope {
 
-                val unSyncedBooks = bookDao.getUnsyncedBooks()
+                val unSyncedBooks = db.bookDao().getUnsyncedBooks()
                 unSyncedBooks.forEach { bookEntity ->
                     launch {
                         try{
                             val book = bookEntity.toBook()
                             bookRepository.addBook(book, true)
-                            bookDao.updateBookSyncStatus(book.id)
+                            db.bookDao().updateBookSyncStatus(book.id)
                         } catch (e: Exception){
                             Log.e("SyncWorker", "Book sync error: ${e.message}")
                         }
@@ -45,7 +43,7 @@ class SyncWorker @AssistedInject constructor(
                 }
 
 
-                val deletedBooks = bookDao.getDeletedUnsyncedBooks()
+                val deletedBooks = db.bookDao().getDeletedUnsyncedBooks()
                 deletedBooks.forEach { bookEntity ->
                     launch {
                         try{
@@ -57,13 +55,13 @@ class SyncWorker @AssistedInject constructor(
                     }
                 }
 
-                val unSyncedGoals = monthlyGoalDao.getUnsyncedGoals()
+                val unSyncedGoals = db.monthlyGoalDao().getUnsyncedGoals()
                 unSyncedGoals.forEach { goalEntity ->
                     launch {
                         try{
                             val goal = goalEntity.toMonthlyGoal()
                             monthlyGoalRepository.saveMonthlyGoal(goal.goalCount, true)
-                            monthlyGoalDao.updateMonthlyGoal(goal.id, true)
+                            db.monthlyGoalDao().updateMonthlyGoal(goal.id, true)
                         } catch (e: Exception){
                             Log.e("SyncWorker", "Monthly target synchronization error: ${e.message}")
                         }

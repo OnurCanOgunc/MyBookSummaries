@@ -27,11 +27,23 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 onAction = viewModel::onAction,
                 navigateToHome = {
                     navController.navigate(Screens.Main.Home) {
-                        popUpTo(Screens.Auth) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 },
-                navigateToSignUp = { navController.navigate(Screens.Auth.SignUp) },
-                navigateToLogin = { navController.navigate(Screens.Auth.SignIn) }
+                navigateToSignUp = {
+                    navController.navigate(Screens.Auth.SignUp) {
+                        popUpTo(Screens.Auth.SignUp) { inclusive = false }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                navigateToLogin = {
+                    navController.navigate(Screens.Auth.SignIn) {
+                        popUpTo(Screens.Auth.SignIn) { inclusive = false }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
         }
         composable<Screens.Auth.SignIn> {
@@ -44,10 +56,16 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 onAction = viewModel::onAction,
                 navigateToHome = {
                     navController.navigate(Screens.Main.Home) {
-                        popUpTo(Screens.Auth) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 },
-                navigateToSignUp = { navController.navigate(Screens.Auth.SignUp) },
+                navigateToSignUp = {
+                    navController.navigate(Screens.Auth.SignUp) {
+                        popUpTo(Screens.Auth.SignUp) { inclusive = false }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 popBackStack = { navController.popBackStack() }
 
             )
@@ -62,10 +80,16 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 onAction = viewModel::onAction,
                 navigateToHome = {
                     navController.navigate(Screens.Main.Home) {
-                        popUpTo(Screens.Auth) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 },
-                navigateToSignIn = { navController.navigate(Screens.Auth.SignIn) },
+                navigateToSignIn = {
+                    navController.navigate(Screens.Auth.SignIn) {
+                        popUpTo(Screens.Auth.SignIn) { inclusive = false }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 popBackStack = { navController.popBackStack() }
             )
         }

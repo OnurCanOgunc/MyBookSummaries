@@ -10,9 +10,6 @@ import java.util.UUID
     indices = [
         Index(value = ["readingStatus"]),
         Index(value = ["finishedReadingDate"]),
-        Index(value = ["title"]),
-        Index(value = ["isDeleted"]),
-        Index(value = ["isSynced"])
     ]
 )
 data class BookEntity(

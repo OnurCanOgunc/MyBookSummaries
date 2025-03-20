@@ -1,8 +1,9 @@
 package com.decode.mybooksummaries.presentation.detail
 
-import androidx.lifecycle.ViewModel
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.decode.mybooksummaries.core.network.ConnectivityObserver
+import com.decode.mybooksummaries.core.ui.extensions.timestampToString
 import com.decode.mybooksummaries.core.ui.viewmodel.BaseViewModel
 import com.decode.mybooksummaries.core.utils.Response
 import com.decode.mybooksummaries.domain.model.Quote
@@ -10,13 +11,8 @@ import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.domain.usecase.QuoteUseCases
 import com.decode.mybooksummaries.presentation.detail.DetailContract.UiEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +44,7 @@ class DetailViewModel @Inject constructor(
                 is DetailContract.UiAction.OnDeleteClick -> deleteBook(uiAction.bookId)
                 DetailContract.UiAction.OnDismissRequest -> updateUiState { copy(expanded = false) }
                 DetailContract.UiAction.OnMoveCartClick -> updateUiState { copy(expanded = !expanded) }
-
+                DetailContract.UiAction.OnMessageShown -> updateUiState { copy(error = "") }
             }
         }
     }
@@ -60,7 +56,14 @@ class DetailViewModel @Inject constructor(
             isConnected.collectLatest { connected ->
                 when (val result = bookUseCase.getBookById(id, connected)) {
                     is Response.Success -> {
-                        updateUiState { copy(book = result.data, isLoading = false) }
+                        updateUiState {
+                            copy(
+                                book = result.data,
+                                isLoading = false,
+                                bookStartDate = result.data.startedReadingDate.timestampToString(),
+                                bookFinishDate = result.data.finishedReadingDate.timestampToString()
+                            )
+                        }
                     }
 
                     is Response.Failure -> {
@@ -68,7 +71,7 @@ class DetailViewModel @Inject constructor(
                     }
 
                     Response.Empty -> {
-                        updateUiState { copy(error = "Book not found", isLoading = false) }
+                        updateUiState { copy(error = "Quote not found", isLoading = false) }
                     }
                 }
             }
@@ -78,38 +81,49 @@ class DetailViewModel @Inject constructor(
 
     private fun addQuote(quote: String) {
         viewModelScope.launch {
-            val currentQuotes = uiState.value.quotes
-            updateUiState { copy(isLoading = true, quote = quote) }
+            Log.d("DetailViewModel", "Current Quotes: ${uiState.value.quotes}")
+            updateUiState { copy(isLoading = true) }
             if (quote.isEmpty()) {
-                updateUiState { copy(error = "Quote cannot be empty") }
+                updateUiState { copy(error = "Quote cannot be empty", isLoading = false) }
                 return@launch
             }
-            val bookID = uiState.value.book.id
-            val quoteModel = Quote(
-                bookId = bookID,
-                quote = quote,
-            )
-            isConnected.collectLatest { connected ->
-                when (val result = quoteUseCase.addQuote(quoteModel, connected)) {
-                    is Response.Success -> {
-                        updateUiState {
-                            copy(
-                                isLoading = false,
-                                quote = "",
-                                quotes = currentQuotes.plus(result.data)
-                            )
-                        }
-                    }
+            val quoteModel = Quote(bookId = uiState.value.book.id, quote = quote)
+            updateUiState { copy(quoteModel = quoteModel) }
 
-                    is Response.Failure -> {
-                        updateUiState { copy(isLoading = false, error = result.message) }
-                    }
 
-                    Response.Empty -> {
-                        updateUiState { copy(isLoading = false, error = "Something went wrong") }
+            when (val result = quoteUseCase.addQuote(quoteModel, isConnected.value)) {
+                is Response.Success -> {
+                    Log.d("DetailViewModel", "Quote added successfully")
+                    updateUiState {
+                        copy(
+                            isLoading = false,
+                            quote = "",
+                            quoteModel = Quote()
+                        )
+                    }
+                }
+
+                is Response.Failure -> {
+                    updateUiState {
+                        copy(
+                            isLoading = false,
+                            error = result.message,
+                            quoteModel = Quote()
+                        )
+                    }
+                }
+
+                Response.Empty -> {
+                    updateUiState {
+                        copy(
+                            isLoading = false,
+                            error = "Something went wrong",
+                            quoteModel = Quote()
+                        )
                     }
                 }
             }
+
         }
     }
 
@@ -139,8 +153,27 @@ class DetailViewModel @Inject constructor(
     private fun deleteQuote(quote: Quote) {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
+            when (val result = quoteUseCase.deleteQuote(quote, isConnected.value)) {
+                is Response.Success -> {
+                    updateUiState { copy(isLoading = false) }
+                }
+
+                is Response.Failure -> {
+                    updateUiState { copy(isLoading = false, error = result.message) }
+                }
+
+                Response.Empty -> {
+                    updateUiState { copy(isLoading = false, error = "Something went wrong") }
+                }
+            }
+        }
+    }
+
+    private fun deleteQuotes() {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
             isConnected.collectLatest { connected ->
-                when (val result = quoteUseCase.deleteQuote(quote, connected)) {
+                when (val result = quoteUseCase.deleteAllQuotes(connected)) {
                     is Response.Success -> {
                         updateUiState { copy(isLoading = false) }
                     }
@@ -163,7 +196,9 @@ class DetailViewModel @Inject constructor(
             isConnected.collectLatest { connected ->
                 when (val result = bookUseCase.deleteBook(bookId, connected)) {
                     is Response.Success -> {
+                        deleteQuotes()
                         updateUiState { copy(isLoading = false) }
+                        delay(100)
                         emitUiEffect(UiEffect.NavigateBack)
                     }
 
@@ -172,7 +207,12 @@ class DetailViewModel @Inject constructor(
                     }
 
                     Response.Empty -> {
-                        updateUiState { copy(isLoading = false, error = "Something went wrong") }
+                        updateUiState {
+                            copy(
+                                isLoading = false,
+                                error = "Something went wrong"
+                            )
+                        }
                     }
                 }
             }

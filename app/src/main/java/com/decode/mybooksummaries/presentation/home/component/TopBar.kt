@@ -17,12 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +37,7 @@ fun TopBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp)
+            .padding(top = 16.dp,  bottom = 12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -47,21 +46,21 @@ fun TopBar(
         ) {
             Text(
                 text = stringResource(R.string.booksum),
-                fontSize = 21.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier.padding(start = 5.dp)
+                style = CustomTheme.typography.headlineMedium,
+                color = CustomTheme.colors.textBlack,
+                modifier = Modifier.padding(start = 8.dp)
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 IconButton(onClick = onAddClick) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(R.string.add_book),
-                        tint = Color.White
+                        tint = CustomTheme.colors.textBlack,
+                        modifier = Modifier.alpha(0.85f)
                     )
                 }
 
@@ -69,13 +68,20 @@ fun TopBar(
                     Icon(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = stringResource(R.string.profile),
-                        tint = Color.White
+                        tint = CustomTheme.colors.textBlack,
+                        modifier = Modifier.alpha(0.85f)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        SearchBar(onSearch = onSearchClick, clearSearchQuery = clearSearchQuery, searchText = searchText, updateSearchQuery = updateSearchQuery)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SearchBar(
+            searchText = searchText,
+            updateSearchQuery = updateSearchQuery,
+            onSearch = onSearchClick,
+            clearSearchQuery = clearSearchQuery
+        )
     }
 }

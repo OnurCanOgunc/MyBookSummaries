@@ -15,14 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
-import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 
 @Composable
@@ -34,9 +31,8 @@ fun ReadingStatistics(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.reading_statistics),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
+            style = CustomTheme.typography.titleLarge,
+            color = CustomTheme.colors.textBlack,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start
         )
@@ -62,7 +58,7 @@ fun StatisticCard(
         modifier = modifier
             .size(width = 180.dp, height = 90.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(SearchBarContainerColor)
+            .background(CustomTheme.colors.charcoalBlack)
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -70,14 +66,13 @@ fun StatisticCard(
 
         Text(
             text = value,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            style = CustomTheme.typography.titleLarge,
+            color = CustomTheme.colors.softWhite
         )
         Text(
             text = title,
-            fontSize = 14.sp,
-            color = Color.Gray
+            style = CustomTheme.typography.titleLarge,
+            color = CustomTheme.colors.softWhite
         )
 
     }

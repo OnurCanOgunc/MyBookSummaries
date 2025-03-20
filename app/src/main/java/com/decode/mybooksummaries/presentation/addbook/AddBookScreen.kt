@@ -1,7 +1,6 @@
 package com.decode.mybooksummaries.presentation.addbook
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,11 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.decode.mybooksummaries.presentation.addbook.AddBookContract.UiAction
 import com.decode.mybooksummaries.presentation.addbook.AddBookContract.UiEffect
@@ -42,11 +42,11 @@ import com.decode.mybooksummaries.presentation.addbook.component.ReadingStatusSe
 import com.decode.mybooksummaries.core.ui.components.TopBar
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
 import com.decode.mybooksummaries.core.ui.extensions.timestampToString
-import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor
 import com.decode.mybooksummaries.presentation.addbook.utils.uriToBase64
 import com.decode.mybooksummaries.presentation.addbook.utils.uriToBitmap
 import kotlinx.coroutines.flow.Flow
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun AddBookScreen(
@@ -73,23 +73,18 @@ fun AddBookScreen(
 
     val scrollState = rememberScrollState()
 
-    Scaffold(
-        topBar = {
-            TopBar(
-                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
-                title = if (bookId == null) stringResource(R.string.add_book) else stringResource(R.string.edit_book),
-                popBackStack = { onAction(UiAction.OnBackClick) })
-        }
-    ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(HomeBackgroundColor)
                 .padding(horizontal = 16.dp)
-                .padding(paddingValues)
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            TopBar(
+                modifier = Modifier,
+                title = if (bookId == null) stringResource(R.string.add_book) else stringResource(R.string.edit_book),
+                popBackStack = { onAction(UiAction.OnBackClick) })
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -108,21 +103,21 @@ fun AddBookScreen(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 ReadingStatusSelector(
-                    selectedStatus = uiState.readingStatus,
+                    selectedStatus = uiState.book.readingStatus,
                     onStatusSelected = { onAction(UiAction.OnReadingStatusChange(it)) })
             }
 
             BookInfoFields(
-                title = uiState.title,
-                author = uiState.author,
-                pageCount = uiState.pageCount,
-                currentPage = uiState.currentPage,
+                title = uiState.book.title,
+                author = uiState.book.author,
+                pageCount = uiState.book.pageCount,
+                currentPage = uiState.book.currentPage,
                 onAction = onAction
             )
 
             DropdownField(
                 label = stringResource(R.string.genre),
-                selectedItem = uiState.genre,
+                selectedItem = uiState.book.genre,
                 onItemSelected = { onAction(UiAction.OnGenreChange(it)) }
             )
             BookDate(onAction, uiState)
@@ -132,37 +127,42 @@ fun AddBookScreen(
                 onCancel = { onAction(UiAction.OnCancelClick) },
                 onAddBook = { onAction(UiAction.OnAddBookClick) })
         }
-    }
+
 }
 
 @Composable
 private fun BookSummary(
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     uiState: UiState,
     onAction: (UiAction) -> Unit
 ) {
     Column {
         Text(
             text = stringResource(R.string.summary),
-            style = MaterialTheme.typography.labelMedium,
+            style = CustomTheme.typography.labelMedium,
             modifier = Modifier.padding(bottom = 4.dp),
-            color = Color.White
+            color = CustomTheme.colors.textBlack
+
         )
         OutlinedTextField(
-            value = uiState.summary,
+            value = uiState.book.summary,
             onValueChange = { onAction(UiAction.OnSummaryChange(it)) },
             shape = RoundedCornerShape(6.dp),
             modifier = modifier
                 .height(100.dp)
                 .fillMaxWidth(),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = CustomTheme.colors.textBlack,
+                unfocusedTextColor = CustomTheme.colors.textBlack,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
+                focusedIndicatorColor = CustomTheme.colors.charcoalBlack,
+                unfocusedIndicatorColor = CustomTheme.colors.coolGray,
             ),
-            textStyle = TextStyle(textAlign = TextAlign.Start),
+            textStyle = TextStyle(
+                textAlign = TextAlign.Start,
+                color = CustomTheme.colors.textBlack
+            ),
         )
     }
 }
@@ -177,16 +177,30 @@ private fun BookDate(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.START_DATE)) }) {
-            val formattedDate = uiState.startedReadingDate?.timestampToString() ?: stringResource(R.string.started_date)
-            Text(text = formattedDate)
+        Button(
+            onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.START_DATE)) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = CustomTheme.colors.electricOrange,
+                contentColor = CustomTheme.colors.textWhite
+            )
+        ) {
+            val formattedDate = uiState.book.startedReadingDate?.timestampToString()
+                ?: stringResource(R.string.started_date)
+            Text(text = formattedDate, style = CustomTheme.typography.labelMedium,color = CustomTheme.colors.softWhite)
         }
-        Button(onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.FINISH_DATE)) }) {
-            val formattedDate = uiState.finishedReadingDate?.timestampToString() ?: stringResource(R.string.finished_date)
-            Text(text = formattedDate)
+        Button(
+            onClick = { onAction(UiAction.OnDatePickerTypeChange(DatePickerType.FINISH_DATE)) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = CustomTheme.colors.electricOrange,
+                contentColor = CustomTheme.colors.textWhite
+            )
+        ) {
+            val formattedDate = uiState.book.finishedReadingDate?.timestampToString()
+                ?: stringResource(R.string.finished_date)
+            Text(text = formattedDate,style = CustomTheme.typography.labelMedium,color = CustomTheme.colors.softWhite)
         }
     }
-    if (uiState.datePickerType != null) {
+    uiState.datePickerType?.let {
         DatePickerModalInput(
             onDateSelected = { dateMillis ->
                 when (uiState.datePickerType) {
@@ -232,10 +246,12 @@ fun BookInfoFields(
         InputField(
             label = stringResource(R.string.total_pages),
             value = pageCount,
-            onValueChange = { onAction(UiAction.OnPageCountChange(it)) })
+            onValueChange = { onAction(UiAction.OnPageCountChange(it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
         InputField(
             label = stringResource(R.string.current_pages),
             value = currentPage,
-            onValueChange = { onAction(UiAction.OnCurrentPageChange(it)) })
+            onValueChange = { onAction(UiAction.OnCurrentPageChange(it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
     }
 }

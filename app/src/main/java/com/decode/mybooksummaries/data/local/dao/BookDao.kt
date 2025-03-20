@@ -16,7 +16,7 @@ interface BookDao {
     @Query("DELETE FROM books WHERE isSynced = 1 AND id NOT IN (SELECT id FROM books)")
     suspend fun clearSyncedBooks()
 
-    @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%' OR author LIKE '%' || :query || '%' COLLATE NOCASE")
     fun searchBooks(query: String):  Flow<List<BookEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -48,6 +48,9 @@ interface BookDao {
 
     @Query("SELECT COUNT(*) FROM books WHERE readingStatus = 'Read' AND finishedReadingDate >= :startOfMonth")
     suspend fun getBooksReadThisMonth(startOfMonth: Long): Int
+
+    @Query("SELECT * FROM books WHERE genre = :category")
+    fun getBooksByCategory(category: String): Flow<List<BookEntity>>
 
     @Query("DELETE FROM books")
     suspend fun deleteAllBooks()

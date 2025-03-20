@@ -24,7 +24,6 @@ interface QuoteDao {
     @Query("SELECT * FROM quotes")
     fun getAllQuotes(): Flow<List<QuoteEntity>>
 
-    @Query("Select * from quotes Where isSynced = 0")
-    suspend fun getUnsyncedQuotes(): List<QuoteEntity>
-
+    @Query("DELETE FROM QUOTES")
+    suspend fun deleteAllQuotes()
 }

@@ -13,14 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
-import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun ProgressCard(
@@ -41,16 +39,16 @@ fun ProgressCard(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                SearchBarContainerColor,
+                CustomTheme.colors.charcoalBlack,
                 RoundedCornerShape(12.dp)
             )
     ) {
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.monthly_goal),
-            fontSize = 20.sp,
+            style = CustomTheme.typography.bodyExtraLarge,
             fontWeight = FontWeight.SemiBold,
-            color = Color.White,
+            color = CustomTheme.colors.softWhite,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -60,15 +58,15 @@ fun ProgressCard(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
                 .clip(RoundedCornerShape(50)),
-            color = Color(0xFF4CAF50),
-            trackColor = Color(0xFF2E2E3E),
+            color = CustomTheme.colors.deepRose,
+            trackColor = CustomTheme.colors.slateGray,
 
             )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "$booksRead/$monthlyGoal",
-            fontSize = 16.sp,
-            color = Color.Gray,
+            style = CustomTheme.typography.bodyMedium,
+            color = CustomTheme.colors.softWhite,
             textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()

@@ -1,8 +1,8 @@
 package com.decode.mybooksummaries.presentation.auth.welcome
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,23 +15,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
-import com.decode.mybooksummaries.core.ui.theme.EmailButtonColor
-import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor2
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeContract.UiAction
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeContract.UiEffect
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeContract.UiState
@@ -56,19 +52,17 @@ fun WelcomeScreen(
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(HomeBackgroundColor2)) {
-        Image(
-            painter = painterResource(id = R.drawable.background),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 20.dp))
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 20.dp),
+                color = CustomTheme.colors.slateGray
+            )
         }
 
         Column(
@@ -81,9 +75,9 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(R.string.manage_books_summaries_quotes),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray,
-                fontSize = 16.sp,
+                style = CustomTheme.typography.bodyLarge,
+                color = CustomTheme.colors.textBlack,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
@@ -112,9 +106,9 @@ fun LogoHeader() {
 
         Text(
             text = stringResource(R.string.booknest),
-            style = MaterialTheme.typography.headlineMedium,
+            style = CustomTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = CustomTheme.colors.textBlack
         )
     }
 }
@@ -124,7 +118,6 @@ fun LoginButtons(onAction: (UiAction) -> Unit) {
     CustomButton(
         painter = painterResource(id = R.drawable.google),
         title = stringResource(R.string.sign_in_with_google),
-        backgroundColor = Color(0xFF4CAF50),
         onClick = { onAction(UiAction.OnLoginWithGoogleClick) }
     )
 
@@ -134,13 +127,22 @@ fun LoginButtons(onAction: (UiAction) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Black)
+        HorizontalDivider(
+            modifier = Modifier.weight(1f),
+            color = CustomTheme.colors.textBlack,
+            thickness = 2.dp
+        )
         Text(
             text = stringResource(R.string.or),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Black
+            style = CustomTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = CustomTheme.colors.textBlack
         )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Black)
+        HorizontalDivider(
+            modifier = Modifier.weight(1f),
+            color = CustomTheme.colors.textBlack,
+            thickness = 2.dp
+        )
     }
 
     Spacer(modifier = Modifier.height(12.dp))
@@ -148,7 +150,6 @@ fun LoginButtons(onAction: (UiAction) -> Unit) {
     CustomButton(
         painter = painterResource(id = R.drawable.email),
         title = stringResource(R.string.sign_in_with_email),
-        backgroundColor = EmailButtonColor,
         onClick = { onAction(UiAction.OnLoginClick) }
     )
 }
@@ -161,17 +162,21 @@ fun SignUpFooter(onSignUpClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(R.string.no_account),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.DarkGray,
-            fontWeight = FontWeight.SemiBold,
+            style = CustomTheme.typography.bodyMedium,
+            color = CustomTheme.colors.textBlack,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(R.string.sign_up),
-            color = Color(0xFF4CAF50),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.clickable { onSignUpClick() }
+            color = CustomTheme.colors.textBlack,
+            style = CustomTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onSignUpClick()
+            }
         )
     }
 }

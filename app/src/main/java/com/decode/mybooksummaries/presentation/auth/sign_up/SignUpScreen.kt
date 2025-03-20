@@ -1,9 +1,7 @@
 package com.decode.mybooksummaries.presentation.auth.sign_up
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,33 +14,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.components.CustomBackButton
 import com.decode.mybooksummaries.core.ui.components.CustomOutlinedTextField
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
-import com.decode.mybooksummaries.core.ui.theme.ErrorColor
-import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor2
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.auth.sign_up.SignUpContract.UiAction
 import com.decode.mybooksummaries.presentation.auth.sign_up.SignUpContract.UiEffect
 import com.decode.mybooksummaries.presentation.auth.sign_up.SignUpContract.UiState
@@ -69,31 +61,17 @@ fun SignUpScreen(
     }
 
     LaunchedEffect(uiState.message) {
-        if (!uiState.message.isNullOrEmpty()) {
+        if (uiState.message.isNotEmpty()) {
             delay(3000)
             onAction(UiAction.OnMessageShown)
         }
     }
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(HomeBackgroundColor2)) {
-        Image(
-            painter = painterResource(R.drawable.background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        IconButton(
-            onClick = { onAction(UiAction.OnBackClick) },
-            modifier = Modifier.padding(top = 24.dp, start = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = stringResource(R.string.back),
-                tint = Color.Black
-            )
-        }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        CustomBackButton(back = { onAction(UiAction.OnBackClick) })
 
         Column(
             verticalArrangement = Arrangement.Top,
@@ -105,15 +83,16 @@ fun SignUpScreen(
         ) {
             SignUpHeader()
             SignUpFields(uiState, onAction)
-            uiState.message?.let {
-                AnimatedVisibility(visible = true) {
-                    Text(
-                        text = uiState.message,
-                        color = ErrorColor,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-                }
+            if (uiState.message.isNotEmpty()) {
+                Text(
+                    text = uiState.message,
+                    color = CustomTheme.colors.errorColor,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(top = 8.dp),
+                )
             }
+
             SignUpButton(uiState, onAction)
         }
 
@@ -126,15 +105,14 @@ fun SignUpHeader() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = stringResource(R.string.welcome),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
+            style = CustomTheme.typography.headlineLarge,
+            color = CustomTheme.colors.textBlack
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.start_exploring),
-            fontSize = 18.sp,
-            color = Color.DarkGray
+            style = CustomTheme.typography.titleMedium,
+            color = CustomTheme.colors.textBlack
         )
     }
 }
@@ -192,15 +170,14 @@ fun SignUpButton(uiState: UiState, onAction: (UiAction) -> Unit) {
             .height(50.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF4CAF50),
-            disabledContainerColor = Color.Gray,
-            disabledContentColor = Color.White.copy(alpha = 0.6f)
+            containerColor = CustomTheme.colors.charcoalBlack,
+            disabledContentColor = CustomTheme.colors.softWhite
         )
     ) {
         if (uiState.isLoading) {
-            CircularProgressIndicator(color = Color.White)
+            CircularProgressIndicator(color = CustomTheme.colors.softWhite)
         } else {
-            Text(stringResource(R.string.create_account), color = Color.White)
+            Text(stringResource(R.string.create_account), color = CustomTheme.colors.softWhite)
         }
     }
 }
@@ -216,14 +193,18 @@ fun SignUpFooter(modifier: Modifier, onLoginClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(R.string.already_have_an_account),
-            color = Color.Black.copy(alpha = 0.8f)
+            color = CustomTheme.colors.textBlack
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(R.string.sign_in),
-            color = Color(0xFF4CAF50),
+            color = CustomTheme.colors.textBlack,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable { onLoginClick() }
+            style = CustomTheme.typography.labelLarge,
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onLoginClick() }
         )
     }
 }

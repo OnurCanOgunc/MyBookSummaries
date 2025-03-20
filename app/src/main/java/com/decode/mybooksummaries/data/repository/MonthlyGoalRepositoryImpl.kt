@@ -1,7 +1,7 @@
 package com.decode.mybooksummaries.data.repository
 
 import com.decode.mybooksummaries.core.utils.Response
-import com.decode.mybooksummaries.data.local.dao.MonthlyGoalDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toEntity
 import com.decode.mybooksummaries.data.mapper.toMonthlyGoal
 import com.decode.mybooksummaries.domain.model.MonthlyGoal
@@ -21,7 +21,7 @@ import javax.inject.Named
 
 class MonthlyGoalRepositoryImpl @Inject constructor(
     @Named("monthlyGoalRef")private val monthlyGoalsRef: CollectionReference,
-    private val monthlyGoalDao: MonthlyGoalDao
+    private val db: BookDatabase
 ) : MonthlyGoalRepository {
 
     override suspend fun saveMonthlyGoal(
@@ -38,9 +38,9 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
 
             if (isConnected) {
                 monthlyGoalsRef.document(month).set(monthlyGoal).await()
-                monthlyGoalDao.insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = true))
+                db.monthlyGoalDao().insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = true))
             } else {
-                monthlyGoalDao.insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = false))
+                db.monthlyGoalDao().insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = false))
             }
             Response.Success(Unit)
         } catch (e: Exception) {
@@ -52,7 +52,7 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
         isConnected: Boolean
     ): Flow<Response<MonthlyGoal>> = callbackFlow {
         val month = getFormattedDate()
-        val cachedGoal = monthlyGoalDao.getMonthlyGoal(month)
+        val cachedGoal = db.monthlyGoalDao().getMonthlyGoal(month)
         if (cachedGoal != null) {
             trySend(Response.Success(cachedGoal.toMonthlyGoal())).isSuccess
         }
@@ -61,14 +61,14 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
             val listener = monthlyGoalsRef.document(month)
                 .addSnapshotListener { snapshot, error ->
                     error?.let {
-                        trySend(Response.Failure(it.message ?: "Firestore error")).isSuccess
+                        trySend(Response.Failure(it.message ?: "firestore error")).isSuccess
                         return@addSnapshotListener
                     }
 
                     val goal = snapshot?.toObject(MonthlyGoal::class.java)
                     goal?.let {
                         CoroutineScope(Dispatchers.IO).launch {
-                            monthlyGoalDao.insertMonthlyGoal(it.toEntity().copy(isSynced = true))
+                            db.monthlyGoalDao().insertMonthlyGoal(it.toEntity().copy(isSynced = true))
                         }
                         trySend(Response.Success(it))
                     } ?: trySend(Response.Empty)

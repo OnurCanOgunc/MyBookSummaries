@@ -1,10 +1,11 @@
 package com.decode.mybooksummaries.di
 
 import com.decode.mybooksummaries.data.repository.QuoteRepositoryImpl
-import com.decode.mybooksummaries.data.local.dao.QuoteDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.domain.repository.QuoteRepository
 import com.decode.mybooksummaries.domain.usecase.QuoteUseCases
 import com.decode.mybooksummaries.domain.usecase.quotes.AddQuoteUseCase
+import com.decode.mybooksummaries.domain.usecase.quotes.DeleteAllQuotesUseCase
 import com.decode.mybooksummaries.domain.usecase.quotes.DeleteQuotesUseCase
 import com.decode.mybooksummaries.domain.usecase.quotes.GetQuotesUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -25,8 +26,8 @@ object QuoteModule {
     @Singleton
     fun provideQuoteRepository(
         @Named("quotesRef") quotesRef: CollectionReference,
-        quotesDao: QuoteDao): QuoteRepository {
-        return QuoteRepositoryImpl(quotesRef = quotesRef, quotesDao = quotesDao)
+        db: BookDatabase): QuoteRepository {
+        return QuoteRepositoryImpl(quotesRef = quotesRef, db = db)
     }
 
     @Provides
@@ -35,7 +36,8 @@ object QuoteModule {
         return QuoteUseCases(
             addQuote = AddQuoteUseCase(repository),
             getQuotes = GetQuotesUseCase(repository),
-            deleteQuote = DeleteQuotesUseCase(repository)
+            deleteQuote = DeleteQuotesUseCase(repository),
+            deleteAllQuotes = DeleteAllQuotesUseCase(repository)
         )
     }
 

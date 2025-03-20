@@ -8,7 +8,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,31 +17,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
+import okhttp3.internal.immutableListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownField(label: String, selectedItem: String, onItemSelected: (String) -> Unit) {
-    val items = listOf(
-        "Roman",
-        "Psikoloji",
-        "Tarih",
-        "Kişisel Gelişim",
-        "Eğitim",
-        "Felsefe",
-        "Bilim-Kurgu",
-        "Biyogragfi"
+    val items = immutableListOf(
+        "Fiction",
+        "Romance",
+        "History",
+        "Science Fiction",
+        "Biography",
+        "Self-help",
+        "Horror",
+        "Dystopian",
+        "Others"
     )
     var expanded by remember { mutableStateOf(false) }
 
     Column {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = Color.White,
+            style = CustomTheme.typography.labelLarge,
+            color = CustomTheme.colors.textBlack,
             modifier = Modifier.padding(bottom = 4.dp)
         )
         ExposedDropdownMenuBox(
@@ -60,15 +61,15 @@ fun DropdownField(label: String, selectedItem: String, onItemSelected: (String) 
                     .menuAnchor()
                     .fillMaxWidth()
                     .height(48.dp),
-                textStyle = TextStyle(textAlign = TextAlign.Start),
+                textStyle = TextStyle(textAlign = TextAlign.Start,color = CustomTheme.colors.textBlack),
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    focusedTrailingIconColor = Color.White,
-                    unfocusedTrailingIconColor = Color.White
+                    focusedTextColor = CustomTheme.colors.textBlack,
+                    unfocusedTextColor = CustomTheme.colors.textBlack,
+                    focusedContainerColor = CustomTheme.colors.backgroundColor,
+                    unfocusedContainerColor = CustomTheme.colors.backgroundColor,
+                    focusedIndicatorColor = CustomTheme.colors.coolGray,
+                    focusedTrailingIconColor = CustomTheme.colors.textBlack,
+                    unfocusedTrailingIconColor = CustomTheme.colors.textBlack
                 )
             )
             ExposedDropdownMenu(
@@ -78,7 +79,9 @@ fun DropdownField(label: String, selectedItem: String, onItemSelected: (String) 
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(item) },
+                        text = { Text(
+                            text = item,
+                            color = CustomTheme.colors.textBlack) },
                         onClick = {
                             onItemSelected(item)
                             expanded = false

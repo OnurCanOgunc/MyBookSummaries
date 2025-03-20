@@ -1,9 +1,7 @@
 package com.decode.mybooksummaries.presentation.auth.sign_in
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,14 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -31,22 +26,20 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.components.CustomBackButton
 import com.decode.mybooksummaries.core.ui.components.CustomOutlinedTextField
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
-import com.decode.mybooksummaries.core.ui.theme.ErrorColor
-import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor2
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.auth.sign_in.SignInContract.UiAction
 import com.decode.mybooksummaries.presentation.auth.sign_in.SignInContract.UiEffect
 import com.decode.mybooksummaries.presentation.auth.sign_in.SignInContract.UiState
@@ -76,28 +69,17 @@ fun SignInScreen(
     }
 
     LaunchedEffect(uiState.message) {
-        if (!uiState.message.isNullOrEmpty()) {
+        if (uiState.message.isNotEmpty()) {
             delay(3000)
             onAction(UiAction.OnMessageShown)
         }
     }
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(HomeBackgroundColor2)) {
-        Image(
-            painter = painterResource(R.drawable.background),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = ""
-        )
-        IconButton(onClick = { onAction(UiAction.OnBackClick) }, modifier = Modifier.padding(top = 24.dp, start = 16.dp)) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = stringResource(R.string.back),
-                tint = Color.Black
-            )
-        }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        CustomBackButton(back = { onAction(UiAction.OnBackClick) })
 
         Column(
             verticalArrangement = Arrangement.Top,
@@ -109,14 +91,17 @@ fun SignInScreen(
         ) {
             SignInHeader()
             SignInFields(uiState, onAction)
-            if (!uiState.message.isNullOrEmpty()) {
-                AnimatedVisibility(visible = true) {
-                    Text(
-                        text = uiState.message,
-                        color = ErrorColor,
-                        modifier = Modifier.align(Alignment.Start)
+            if (uiState.message.isNotEmpty()) {
+                Text(
+                    text = uiState.message,
+                    color = CustomTheme.colors.errorColor,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(top = 8.dp),
+                    style = CustomTheme.typography.bodyMedium,
+
                     )
-                }
+
             }
             SignInButton { onAction(UiAction.OnSignInClick) }
         }
@@ -133,14 +118,16 @@ fun SignInHeader() {
         Text(
             text = stringResource(R.string.hello),
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
+            style = CustomTheme.typography.displaySmall,
+            color = CustomTheme.colors.textBlack
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.glad_to_see_you_again),
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 16.sp
+            style = CustomTheme.typography.bodyLarge,
+            color = CustomTheme.colors.textBlack,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -172,8 +159,13 @@ fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
             text = stringResource(R.string.forgot_password),
             modifier = Modifier
                 .align(Alignment.End)
-                .clickable { onAction(UiAction.OnResetPasswordClick) },
-            color = Color(0xFF4CAF50)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onAction(UiAction.OnResetPasswordClick) },
+            color = CustomTheme.colors.textBlack,
+            style = CustomTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -187,14 +179,17 @@ fun SignInButton(onClick: () -> Unit) {
             .fillMaxWidth()
             .height(50.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+        colors = ButtonDefaults.buttonColors(
+            containerColor = CustomTheme.colors.charcoalBlack,
+            contentColor = CustomTheme.colors.softWhite
+        )
     ) {
-        Text(stringResource(R.string.sign_in), color = Color.White)
+        Text(stringResource(R.string.sign_in), style = CustomTheme.typography.labelLarge)
     }
 }
 
 @Composable
-fun SignInFooter(modifier: Modifier,onSignUpClick: () -> Unit) {
+fun SignInFooter(modifier: Modifier, onSignUpClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -204,14 +199,19 @@ fun SignInFooter(modifier: Modifier,onSignUpClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(R.string.no_account),
-            color = Color.Black.copy(alpha = 0.8f)
+            color = CustomTheme.colors.textBlack,
+            style = CustomTheme.typography.bodyMedium,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(R.string.create_account),
-            color = Color(0xFF4CAF50),
+            color = CustomTheme.colors.textBlack,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable { onSignUpClick() }
+            style = CustomTheme.typography.bodyMedium,
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onSignUpClick() }
         )
     }
 }
@@ -222,7 +222,9 @@ fun ForgotPasswordModal(uiState: UiState, onAction: (UiAction) -> Unit, sheetSta
     if (uiState.dialogVisible) {
         ModalBottomSheet(
             sheetState = sheetState,
-            onDismissRequest = { onAction(UiAction.OnDialogDismiss) }
+            onDismissRequest = { onAction(UiAction.OnDialogDismiss) },
+            containerColor = CustomTheme.colors.backgroundColor,
+            tonalElevation = 8.dp
         ) {
             ForgotPasswordSheet(
                 resetEmail = uiState.email,
@@ -251,11 +253,17 @@ fun ForgotPasswordSheet(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(R.string.forgot_password), fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = stringResource(R.string.forgot_password),
+            style = CustomTheme.typography.headlineSmall,
+            color = CustomTheme.colors.textBlack
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.reset_password),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = CustomTheme.typography.bodyMedium,
+            color = CustomTheme.colors.textBlack
         )
         Spacer(modifier = Modifier.height(16.dp))
         CustomOutlinedTextField(
@@ -272,11 +280,20 @@ fun ForgotPasswordSheet(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
         ) {
-            Text(stringResource(R.string.reset_password), color = Color.White)
+            Text(
+                stringResource(R.string.reset_password),
+                color = CustomTheme.colors.softWhite,
+                style = CustomTheme.typography.labelLarge
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(onClick = onDismiss) {
-            Text(stringResource(R.string.cancel), color = Color.Red)
+            Text(
+                stringResource(R.string.cancel),
+                color = CustomTheme.colors.errorColor,
+                style = CustomTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

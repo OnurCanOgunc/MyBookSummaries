@@ -64,13 +64,14 @@ class EditProfileViewModel @Inject constructor(
 
             try {
                 val nameUpdateResult = updateDisplayNameIfNeeded(state.displayName)
-                val passwordUpdateResult =
-                    updatePasswordIfNeeded(state.currentPassword, state.newPassword)
+                val passwordUpdateResult = updatePasswordIfNeeded(state.currentPassword, state.newPassword)
 
-                if (nameUpdateResult is AuthResponse.Failure || passwordUpdateResult is AuthResponse.Failure) {
-                    val errorMessage = nameUpdateResult.getFailureMessage()
-                        ?: passwordUpdateResult.getFailureMessage()
-                    updateUiState { copy(message = errorMessage, isLoading = false) }
+                val failureMessage = nameUpdateResult.getFailureMessage().ifEmpty {
+                    passwordUpdateResult.getFailureMessage()
+                }
+
+                if (failureMessage.isNotEmpty()) {
+                    updateUiState { copy(message = failureMessage, isLoading = false) }
                     return@launch
                 }
 
@@ -79,7 +80,7 @@ class EditProfileViewModel @Inject constructor(
                 emitUiEffect(EditProfileContract.UiEffect.NavigateBack)
 
             } catch (e: Exception) {
-                updateUiState { copy(message = e.message, isLoading = false) }
+                updateUiState { copy(message = e.message.orEmpty(), isLoading = false) }
             }
         }
     }
@@ -97,8 +98,8 @@ class EditProfileViewModel @Inject constructor(
         return authUseCases.updatePasswordUseCase(currentPassword, newPassword)
     }
 
-    private fun AuthResponse.getFailureMessage(): String? {
-        return if (this is AuthResponse.Failure) this.message else null
+    private fun AuthResponse.getFailureMessage(): String {
+        return if (this is AuthResponse.Failure) this.message else ""
     }
 
     private fun saveMonthlyGoal() {

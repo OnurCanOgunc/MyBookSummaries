@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.presentation.edit_profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,19 +12,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.components.CustomOutlinedTextField
 import com.decode.mybooksummaries.core.ui.components.TopBar
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.edit_profile.EditProfileContract.UiAction
 import com.decode.mybooksummaries.presentation.edit_profile.EditProfileContract.UiEffect
 import com.decode.mybooksummaries.presentation.edit_profile.EditProfileContract.UiState
@@ -48,14 +44,13 @@ fun EditProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0F172A))
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         TopBar(
             title = stringResource(R.string.edit_profile),
             popBackStack = { onAction(UiAction.OnBackClick) })
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         ProfileInfoCard(email = uiState.email)
 
@@ -78,7 +73,7 @@ private fun PasswordChange(
     uiState: UiState,
     onAction: (UiAction) -> Unit
 ) {
-    Text(stringResource(R.string.change_password), style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
+    Text(stringResource(R.string.change_password), style = CustomTheme.typography.titleMedium,color = CustomTheme.colors.textBlack)
     Spacer(modifier = Modifier.height(8.dp))
     CustomOutlinedTextField(
         value = uiState.currentPassword,
@@ -88,21 +83,8 @@ private fun PasswordChange(
         passwordVisibility = uiState.passwordVisibilityCurrent,
         onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityCurrentClick) },
         icon = Icons.Default.Lock,
-        colors = TextFieldDefaults.colors(
-            focusedTrailingIconColor = Color.White,
-            unfocusedTrailingIconColor = Color.White,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            cursorColor = Color.White,
-            focusedLeadingIconColor = Color.White,
-            unfocusedLeadingIconColor = Color.White,
-            focusedLabelColor = Color.LightGray,
-            unfocusedLabelColor = Color.LightGray,
-        )
 
-    )
+        )
     Spacer(modifier = Modifier.height(8.dp))
     CustomOutlinedTextField(
         value = uiState.newPassword,
@@ -112,21 +94,6 @@ private fun PasswordChange(
         passwordVisibility = uiState.passwordVisibilityNew,
         onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityNewClick) },
         icon = Icons.Default.Lock,
-        colors = TextFieldDefaults.colors(
-            focusedTrailingIconColor = Color.White,
-            unfocusedTrailingIconColor = Color.White,
-            focusedLeadingIconColor = Color.White,
-            unfocusedLeadingIconColor = Color.White,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            cursorColor = Color.White,
-            focusedPlaceholderColor = Color.LightGray,
-            unfocusedPlaceholderColor = Color.LightGray,
-            focusedLabelColor = Color.LightGray,
-            unfocusedLabelColor = Color.LightGray,
-        )
     )
 }
 
@@ -136,14 +103,17 @@ fun ActionButtons(onAction: (UiAction) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        OutlinedButton(onClick = { onAction(UiAction.OnBackClick) }) {
-            Text(stringResource(R.string.cancel), color = Color.White)
+        Button(
+            onClick = { onAction(UiAction.OnBackClick) },
+            colors = ButtonDefaults.buttonColors(containerColor = CustomTheme.colors.electricOrange)
+        ) {
+            Text(stringResource(R.string.cancel), color = CustomTheme.colors.textWhite)
         }
         Button(
             onClick = { onAction(UiAction.OnSaveClick) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+            colors = ButtonDefaults.buttonColors(containerColor = CustomTheme.colors.electricOrange)
         ) {
-            Text(stringResource(R.string.save_changes), color = Color.White)
+            Text(stringResource(R.string.save_changes), color = CustomTheme.colors.textWhite)
         }
     }
 }

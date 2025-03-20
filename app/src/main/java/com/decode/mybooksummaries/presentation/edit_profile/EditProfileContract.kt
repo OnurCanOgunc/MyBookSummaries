@@ -7,7 +7,7 @@ object EditProfileContract {
         val currentPassword: String = "",
         val newPassword: String = "",
         val monthlyBookGoal: Int = 0,
-        val message: String? = null,
+        val message: String = "",
         val passwordVisibilityCurrent: Boolean = false,
         val passwordVisibilityNew: Boolean = false,
         val isLoading: Boolean = false
@@ -19,8 +19,8 @@ object EditProfileContract {
         data class OnCurrentPasswordChange(val currentPassword: String) : UiAction
         data class OnNewPasswordChange(val newPassword: String) : UiAction
         data class OnMonthlyBookGoalChange(val monthlyBookGoal: Int) : UiAction
-        object OnPasswordVisibilityCurrentClick : UiAction
-        object OnPasswordVisibilityNewClick : UiAction
+        data object OnPasswordVisibilityCurrentClick : UiAction
+        data object OnPasswordVisibilityNewClick : UiAction
     }
     sealed interface UiEffect {
         data object NavigateBack : UiEffect

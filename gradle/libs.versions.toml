@@ -29,6 +29,8 @@ accompanist = "0.37.0"
 roomKtx = "2.6.1"
 workRuntimeKtx = "2.9.1"
 hiltWork = "1.2.0"
+appcompat = "1.6.1"
+material = "1.10.0"
 
 
 [libraries]
@@ -75,6 +77,8 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 hilt-android-compilerx = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -85,3 +89,4 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+android-library = { id = "com.android.library", version.ref = "agp" }

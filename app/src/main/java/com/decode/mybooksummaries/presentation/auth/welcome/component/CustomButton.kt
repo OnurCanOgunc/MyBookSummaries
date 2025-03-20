@@ -15,23 +15,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun CustomButton(
     modifier: Modifier = Modifier,
     painter: Painter,
     title: String,
-    backgroundColor: Color,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
+        colors = ButtonDefaults.buttonColors(containerColor = CustomTheme.colors.charcoalBlack),
         shape = CircleShape,
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
         modifier = modifier
@@ -51,9 +48,8 @@ fun CustomButton(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = title,
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp
+                color = CustomTheme.colors.softWhite,
+                style = CustomTheme.typography.labelLarge
             )
         }
     }

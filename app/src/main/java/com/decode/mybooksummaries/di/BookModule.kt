@@ -1,12 +1,13 @@
 package com.decode.mybooksummaries.di
 
 import com.decode.mybooksummaries.data.repository.BookRepositoryImpl
-import com.decode.mybooksummaries.data.local.dao.BookDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.domain.repository.BookRepository
 import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.domain.usecase.book.AddBookUseCase
 import com.decode.mybooksummaries.domain.usecase.book.DeleteBookUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetBookByIdUseCase
+import com.decode.mybooksummaries.domain.usecase.book.GetBooksByCategoryUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetBooksReadThisMonthUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetSearchBooksUseCase
@@ -28,11 +29,11 @@ object BookModule {
     @Provides
     @Singleton
     fun provideBookRepository(
-        bookDao: BookDao,
+        db: BookDatabase,
         @Named("booksRef") bookRef: CollectionReference
     ): BookRepository = BookRepositoryImpl(
         booksRef = bookRef,
-        bookDao = bookDao,)
+        db = db)
 
     @Provides
     @Singleton
@@ -43,7 +44,8 @@ object BookModule {
         getSearchBooks = GetSearchBooksUseCase(repository),
         deleteBook = DeleteBookUseCase(repository),
         getTotalBooksRead = GetTotalBooksReadUseCase(repository),
-        getBooksReadThisMonth = GetBooksReadThisMonthUseCase(repository)
+        getBooksReadThisMonth = GetBooksReadThisMonthUseCase(repository),
+        getBooksByCategory = GetBooksByCategoryUseCase(repository)
     )
 
     @Provides

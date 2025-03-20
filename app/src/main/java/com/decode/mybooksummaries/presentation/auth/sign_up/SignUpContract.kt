@@ -9,7 +9,7 @@ object SignUpContract {
         val passwordAgain: String = "",
         val passwordVisible1: Boolean = false,
         val passwordVisible2: Boolean = false,
-        val message: String? = null,
+        val message: String = "",
     )
     sealed interface UiAction {
         data object OnLoginClick : UiAction

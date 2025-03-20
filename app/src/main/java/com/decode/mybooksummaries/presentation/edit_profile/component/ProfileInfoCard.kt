@@ -10,27 +10,26 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun ProfileInfoCard(email: String) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+        colors = CardDefaults.cardColors(containerColor = CustomTheme.colors.charcoalBlack),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = Color.White)
+            Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = CustomTheme.colors.softWhite)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(email, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+            Text(email, color = CustomTheme.colors.softWhite, style = CustomTheme.typography.bodyMedium)
         }
     }
 }

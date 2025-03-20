@@ -2,7 +2,7 @@ package com.decode.mybooksummaries.data.repository
 
 import android.util.Log
 import com.decode.mybooksummaries.core.utils.Response
-import com.decode.mybooksummaries.data.local.dao.QuoteDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toQuoteEntity
 import com.decode.mybooksummaries.domain.model.Quote
 import com.decode.mybooksummaries.domain.repository.QuoteRepository
@@ -19,19 +19,20 @@ import javax.inject.Named
 
 class QuoteRepositoryImpl @Inject constructor(
     @Named("quotesRef") private val quotesRef: CollectionReference,
-    private val quotesDao: QuoteDao
+    private val db: BookDatabase
 ) : QuoteRepository {
     override suspend fun addQuote(
         quote: Quote,
         isConnected: Boolean
     ): Response<Quote> {
         return try {
-            val quoteEntity = quote.toQuoteEntity().copy(isSynced = isConnected)
-            quotesDao.insertQuote(quoteEntity)
-            if (isConnected) quotesRef.document(quote.id).set(quote).await()
-            Response.Success(quote)
+            if (isConnected) {
+                db.quoteDao().insertQuote(quote.toQuoteEntity())
+                quotesRef.document(quote.id).set(quote).await()
+                Response.Success(quote)
+            } else Response.Failure("No internet connection")
         } catch (e: Exception) {
-            Response.Failure(e.message ?: "Error adding book")
+            Response.Failure("An error occurred while adding a book")
         }
     }
 
@@ -39,29 +40,35 @@ class QuoteRepositoryImpl @Inject constructor(
         bookId: String,
         isConnected: Boolean
     ): Flow<Response<List<Quote>>> = callbackFlow {
-        Log.d("Firestore", "Fetching quotes for bookId: $bookId")
-        val listener = quotesRef
-            .whereEqualTo("bookId", bookId)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(Response.Failure(error.message ?: "Error fetching quotes"))
-                    Log.d("QuoteRepository", "Error fetching quotes: ${error.message}")
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    val firestoreQuotes = snapshot.documents.mapNotNull { it.toObject(Quote::class.java) }
-                    CoroutineScope(Dispatchers.IO).launch {
-                        quotesDao.insertQuotes(firestoreQuotes.map {
-                            it.toQuoteEntity().copy(isSynced = true)
-                        })
+        Log.d("firestore", "Fetching quotes for bookId: $bookId")
+        if (isConnected) {
+            val listener = quotesRef
+                .whereEqualTo("bookId", bookId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(Response.Failure(error.message ?: "Error fetching quotes"))
+                        Log.d("QuoteRepository", "Error fetching quotes: ${error.message}")
+                        return@addSnapshotListener
                     }
-                    trySend(Response.Success(firestoreQuotes))
-                } else {
-                    trySend(Response.Empty)
+                    if (snapshot != null) {
+                        val firestoreQuotes =
+                            snapshot.documents.mapNotNull { it.toObject(Quote::class.java) }
+                        CoroutineScope(Dispatchers.IO).launch {
+                            db.quoteDao().insertQuotes(firestoreQuotes.map {
+                                it.toQuoteEntity()
+                            })
+                        }
+                        trySend(Response.Success(firestoreQuotes))
+                    } else {
+                        trySend(Response.Empty)
+                    }
                 }
-            }
 
-        awaitClose { listener.remove() }
+            awaitClose { listener.remove() }
+        } else {
+            Response.Failure("No internet connection")
+            awaitClose()
+        }
     }
 
     override suspend fun deleteQuote(
@@ -69,16 +76,30 @@ class QuoteRepositoryImpl @Inject constructor(
         isConnected: Boolean
     ): Response<String> {
         return try {
-            quotesDao.deleteQuote(quote.id)
-            if (isConnected){
-                val quotesSnapshot = quotesRef.whereEqualTo("quote", quote.quote).get().await()
-                quotesSnapshot.forEach {
+            if (isConnected) {
+                db.quoteDao().deleteQuote(quote.id)
+                val quotesSnapshot =
+                    quotesRef.whereEqualTo("quote", quote.quote).limit(1).get().await()
+                quotesSnapshot.documents.firstOrNull()?.reference?.delete()?.await()
+                Response.Success("Book deleted successfully")
+            } else Response.Failure("No internet connection")
+        } catch (e: Exception) {
+            Response.Failure(e.message ?: "Error deleting book")
+        }
+    }
+
+    override suspend fun deleteAllQuotes(isConnected: Boolean): Response<String> {
+        return runCatching {
+            db.quoteDao().deleteAllQuotes()
+            if (isConnected) {
+                val snapshot = quotesRef.get().await()
+                snapshot.forEach {
                     it.reference.delete().await()
                 }
             }
-            Response.Success("Book deleted successfully")
-        } catch (e: Exception) {
-            Response.Failure(e.message ?: "Error deleting book")
+            Response.Success("Quotes deleted successfully")
+        }.getOrElse {
+            Response.Failure(it.message ?: "Error deleting quotes")
         }
     }
 }

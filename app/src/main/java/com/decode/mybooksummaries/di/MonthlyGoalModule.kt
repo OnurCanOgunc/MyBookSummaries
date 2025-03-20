@@ -1,7 +1,7 @@
 package com.decode.mybooksummaries.di
 
 import com.decode.mybooksummaries.data.repository.MonthlyGoalRepositoryImpl
-import com.decode.mybooksummaries.data.local.dao.MonthlyGoalDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.domain.repository.MonthlyGoalRepository
 import com.decode.mybooksummaries.domain.usecase.goal.GetMonthlyGoalUseCase
 import com.decode.mybooksummaries.domain.usecase.MonthlyGoalUseCases
@@ -23,10 +23,10 @@ object MonthlyGoalModule {
     @Provides
     @Singleton
     fun provideMonthlyGoalRepository(
-        monthlyGoalDao: MonthlyGoalDao,
+        db: BookDatabase,
         @Named("monthlyGoalRef")monthlyGoalRef: CollectionReference
     ): MonthlyGoalRepository {
-        return MonthlyGoalRepositoryImpl(monthlyGoalRef,monthlyGoalDao)
+        return MonthlyGoalRepositoryImpl(monthlyGoalRef,db)
     }
 
     @Provides

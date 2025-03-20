@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.clip
@@ -21,6 +20,7 @@ import com.decode.mybooksummaries.R
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.stringResource
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun CoverImageUpload(
@@ -43,7 +43,7 @@ fun CoverImageUpload(
         modifier = Modifier
             .height(180.dp)
             .width(160.dp)
-            .border(1.dp, Color.Yellow, RoundedCornerShape(14.dp))
+            .border(1.dp, CustomTheme.colors.electricOrange, RoundedCornerShape(14.dp))
             .clip(RoundedCornerShape(14.dp))
             .clickable {
                 launcher.launch("image/*")

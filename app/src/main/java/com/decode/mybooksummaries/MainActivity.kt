@@ -8,9 +8,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.core.ui.theme.MyBookSummariesTheme
 import com.decode.mybooksummaries.presentation.navigation.NavGraph
 import com.decode.mybooksummaries.presentation.onboarding.OnboardingUtils
@@ -62,11 +67,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyBookSummariesTheme {
                 val navController = rememberNavController()
-                NavGraph(
-                    navController = navController,
-                    onboardingUtils = onboardingUtils,
-                    isLoggedIn = mainViewModel.authUser
-                )
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = CustomTheme.colors.backgroundColor
+                ) { innerPadding->
+                    NavGraph(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        navController = navController,
+                        onboardingUtils = onboardingUtils,
+                        isLoggedIn = mainViewModel.authUser
+                    )
+                }
             }
         }
         CoroutineScope(Dispatchers.IO).launch {

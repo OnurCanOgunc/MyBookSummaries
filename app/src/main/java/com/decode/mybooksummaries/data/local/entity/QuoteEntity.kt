@@ -10,5 +10,5 @@ data class QuoteEntity(
     val id: String = UUID.randomUUID().toString(),
     val bookId: String? = "",
     val quote: String? = "",
-    val isSynced: Boolean = false
+    val isDeleted: Boolean = false
 )

@@ -38,6 +38,8 @@ class ProfileViewModel @Inject constructor(
                 UiAction.OnBackClick -> {
                     emitUiEffect(UiEffect.NavigateBack)
                 }
+
+                is UiAction.ProfileImageSelected -> updateUiState { copy(profileImage = action.image) }
             }
         }
     }

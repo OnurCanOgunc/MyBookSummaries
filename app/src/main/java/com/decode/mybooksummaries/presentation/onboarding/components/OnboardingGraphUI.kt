@@ -8,15 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.onboarding.OnboardingModel
 
 @Composable
@@ -37,10 +37,10 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
             Text(
                 text = onboardingModel.title,
                 modifier = Modifier.fillMaxWidth(),
-                fontSize = 20.sp,
+                style = CustomTheme.typography.bodyExtraLarge,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                fontWeight = FontWeight.Bold,
+                color = CustomTheme.colors.textBlack
             )
             Spacer(modifier = Modifier.size(10.dp))
             Text(
@@ -48,10 +48,9 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp, 0.dp),
-                fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                style = CustomTheme.typography.titleMedium,
+                color = CustomTheme.colors.textBlack
             )
         }
     }

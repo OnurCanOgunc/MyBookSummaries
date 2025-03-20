@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.presentation.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,25 +19,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.presentation.profile.component.AchievementIcons
 import com.decode.mybooksummaries.presentation.profile.component.ProgressCard
 import com.decode.mybooksummaries.presentation.profile.component.ReadingStatistics
 import kotlinx.coroutines.flow.Flow
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
-import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
 import com.decode.mybooksummaries.presentation.profile.component.ProfileImage
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
+import okhttp3.internal.immutableListOf
 
 @Composable
 fun ProfileScreen(
@@ -49,7 +42,6 @@ fun ProfileScreen(
     onEditProfileClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var selectedImage by remember { mutableStateOf<ProfileImageState>(ProfileImageState.Default) }
 
     uiEffect.CollectWithLifecycle {
         when (it) {
@@ -61,7 +53,7 @@ fun ProfileScreen(
                 onEditProfileClick()
             }
 
-            ProfileContract.UiEffect.NavigateBack ->  {
+            ProfileContract.UiEffect.NavigateBack -> {
                 onBackClick()
             }
         }
@@ -69,8 +61,15 @@ fun ProfileScreen(
 
     Scaffold(
         topBar = {
-            IconButton(onClick = {onBackClick()},modifier = Modifier.padding(top = 34.dp,start = 16.dp)) {
-                Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = stringResource(R.string.back),tint = Color.White)
+            IconButton(
+                onClick = { onBackClick() },
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.back),
+                    tint = CustomTheme.colors.textBlack
+                )
             }
         },
         bottomBar = {
@@ -79,24 +78,24 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = SearchBarContainerColor)
+                colors = ButtonDefaults.buttonColors(containerColor = CustomTheme.colors.charcoalBlack)
             ) {
-                Text(text = stringResource(R.string.sign_out), color = Color.White)
+                Text(text = stringResource(R.string.sign_out), color = CustomTheme.colors.softWhite)
             }
-        }
-    ) { contentPadding ->
+        },
+        containerColor = CustomTheme.colors.backgroundColor
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF1E1E2E))
-                .padding(contentPadding)
+                .padding(innerPadding)
         ) {
             ProfileHeader(
                 email = uiState.email,
                 name = uiState.username,
                 onEditProfileClick = { onAction(ProfileContract.UiAction.NavigateEditProfile) },
-                profileImage = selectedImage,
-                onProfilImageChange = { selectedImage = it }
+                profileImage = uiState.profileImage,
+                onProfileImageChange = { onAction(ProfileContract.UiAction.ProfileImageSelected(it)) }
             )
             Spacer(modifier = Modifier.height(20.dp))
             ProfileStatistics(
@@ -114,7 +113,7 @@ fun ProfileHeader(
     name: String,
     onEditProfileClick: () -> Unit,
     profileImage: ProfileImageState,
-    onProfilImageChange: (ProfileImageState) -> Unit
+    onProfileImageChange: (ProfileImageState) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -122,27 +121,26 @@ fun ProfileHeader(
     ) {
         ProfileImage(
             profileImage = profileImage,
-            onImageSelected = onProfilImageChange,
+            onImageSelected = onProfileImageChange,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = name,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            style = CustomTheme.typography.bodyExtraLarge,
+            color = CustomTheme.colors.textBlack
         )
         Text(
             text = email,
-            fontSize = 14.sp,
-            color = Color.Gray
+            style = CustomTheme.typography.bodyMedium,
+            color = CustomTheme.colors.slateGray
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = {onEditProfileClick()},
+            onClick = { onEditProfileClick() },
             modifier = Modifier.fillMaxWidth(0.5f),
-            colors = ButtonDefaults.buttonColors(containerColor = SearchBarContainerColor)
+            colors = ButtonDefaults.buttonColors(containerColor = CustomTheme.colors.charcoalBlack)
         ) {
-            Text(text = stringResource(R.string.edit_profile))
+            Text(text = stringResource(R.string.edit_profile), color = CustomTheme.colors.softWhite)
         }
     }
 }
@@ -156,8 +154,8 @@ fun ProfileStatistics(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ReadingStatistics(
@@ -165,10 +163,10 @@ fun ProfileStatistics(
             booksReadThisMonth = booksReadThisMonth
         )
         Spacer(modifier = Modifier.height(5.dp))
-        ProgressCard(booksRead = booksRead,monthlyGoal= monthlyGoal )
+        ProgressCard(booksRead = booksRead, monthlyGoal = monthlyGoal)
         Spacer(modifier = Modifier.height(5.dp))
         AchievementIcons(
-            icons = listOf(
+            icons = immutableListOf(
                 Icons.Default.EmojiEvents,
                 Icons.AutoMirrored.Default.MenuBook,
                 Icons.Default.Star

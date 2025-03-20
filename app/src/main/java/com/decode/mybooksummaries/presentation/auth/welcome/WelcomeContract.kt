@@ -3,7 +3,7 @@ package com.decode.mybooksummaries.presentation.auth.welcome
 object WelcomeContract {
     data class UiState(
         val isLoading: Boolean = false,
-        val message: String? = null,
+        val message: String = "",
     )
 
     sealed interface UiAction {

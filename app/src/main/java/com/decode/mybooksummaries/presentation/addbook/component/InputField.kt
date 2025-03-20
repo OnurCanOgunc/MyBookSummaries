@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun InputField(
@@ -24,13 +25,14 @@ fun InputField(
     readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
     singleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions? = null
 ) {
     Column {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
+            style = CustomTheme.typography.labelLarge,
             modifier = Modifier.padding(bottom = 4.dp),
-            color = Color.White
+            color = CustomTheme.colors.textBlack
         )
         OutlinedTextField(
             value = value,
@@ -40,13 +42,15 @@ fun InputField(
             shape = RoundedCornerShape(6.dp),
             modifier = modifier.fillMaxWidth().height(48.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = CustomTheme.colors.textBlack,
+                unfocusedTextColor = CustomTheme.colors.textBlack,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
+                focusedIndicatorColor = CustomTheme.colors.charcoalBlack,
+                unfocusedIndicatorColor = CustomTheme.colors.coolGray,
             ),
-            textStyle = TextStyle(textAlign = TextAlign.Start),
+            textStyle = TextStyle(textAlign = TextAlign.Start,color = CustomTheme.colors.textBlack),
+            keyboardOptions = keyboardOptions?: KeyboardOptions.Default
         )
     }
 }

@@ -14,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun CustomOutlinedTextField(
@@ -33,17 +35,15 @@ fun CustomOutlinedTextField(
     onPasswordVisibilityToggle: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Color(0xFF4CAF50),
-        unfocusedBorderColor = Color.Gray,
-        focusedTextColor = Color.Black,
-        unfocusedTextColor = Color.DarkGray,
-        cursorColor = Color.Black,
-        focusedLabelColor = Color.Black,
-        unfocusedLabelColor = Color.DarkGray,
-        focusedLeadingIconColor = Color.Black,
-        unfocusedLeadingIconColor = Color.DarkGray,
-        focusedTrailingIconColor = Color.Black,
-        unfocusedTrailingIconColor = Color.DarkGray,
+        focusedBorderColor = CustomTheme.colors.charcoalBlack,
+        unfocusedBorderColor = CustomTheme.colors.slateGray,
+        focusedTextColor = CustomTheme.colors.charcoalBlack,
+        unfocusedTextColor = CustomTheme.colors.coolGray,
+        cursorColor = CustomTheme.colors.charcoalBlack,
+        focusedLabelColor = CustomTheme.colors.textBlack,
+        unfocusedLabelColor = CustomTheme.colors.coolGray,
+        unfocusedLeadingIconColor = CustomTheme.colors.coolGray,
+        unfocusedTrailingIconColor = CustomTheme.colors.coolGray,
     )
 ) {
     OutlinedTextField(
@@ -59,7 +59,8 @@ fun CustomOutlinedTextField(
             {
                 Icon(
                     imageVector = it,
-                    contentDescription = label,
+                    contentDescription = "",
+                    tint = CustomTheme.colors.textBlack
                 )
             }
         },
@@ -68,7 +69,8 @@ fun CustomOutlinedTextField(
                 IconButton(onClick = { onPasswordVisibilityToggle?.invoke() }) {
                     Icon(
                         imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = "Toggle Password Visibility",
+                        contentDescription = stringResource(R.string.toggle_password_visibility),
+                        tint = CustomTheme.colors.textBlack,
                     )
                 }
             }

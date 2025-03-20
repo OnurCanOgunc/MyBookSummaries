@@ -16,22 +16,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun AchievementIcons(icons: List<ImageVector>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.recent_achievements),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            style = CustomTheme.typography.titleLarge,
+            color = CustomTheme.colors.textBlack,
         )
         Spacer(modifier= Modifier.height(10.dp))
         Row(
@@ -43,10 +40,10 @@ fun AchievementIcons(icons: List<ImageVector>, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(80.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF282846)),
+                        .background(CustomTheme.colors.charcoalBlack),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(imageVector = icon, contentDescription = stringResource(R.string.achievement), tint = Color.White)
+                    Icon(imageVector = icon, contentDescription = stringResource(R.string.achievement), tint = CustomTheme.colors.softWhite)
                 }
             }
         }

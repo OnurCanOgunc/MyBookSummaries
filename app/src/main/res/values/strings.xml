@@ -10,7 +10,7 @@
     <string name="manage_books_summaries_quotes">Manage your books, add summaries and quotes.</string>
     <string name="booknest">BookNest</string>
     <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="or">or</string>
+    <string name="or">" or "</string>
     <string name="sign_in_with_email">Sign in with Email</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="sign_up">Sign Up</string>
@@ -34,7 +34,7 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="book_cover">Book Cover</string>
-    <string name="ok">OK</string>
+    <string name="ok">Okay</string>
     <string name="edit_book">Edit Book</string>
     <string name="genre">Genre</string>
     <string name="summary">Summary</string>
@@ -48,6 +48,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="started">Started: %1$s</string>
+    <string name="finished">Finished: %1$s</string>
     <string name="reading_progress">Reading Progress</string>
     <string name="pages">%1$s / %2$s pages</string>
     <string name="read_more"><![CDATA[Read More >]]></string>
@@ -77,4 +78,8 @@
     <string name="books_read">Books Read</string>
     <string name="this_month">This Month</string>
     <string name="sign_out">Sign Out</string>
+    <string name="toggle_password_visibility">Toggle Password Visibility</string>
+    <string name="select_from_gallery">select from gallery</string>
+    <string name="empty_book">You don\'t have any books added yet</string>
+    <string name="selected">Selected</string>
 </resources>

@@ -13,6 +13,7 @@ import com.decode.mybooksummaries.presentation.onboarding.OnboardingUtils
 
 @Composable
 fun NavGraph(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     onboardingUtils: OnboardingUtils,
     isLoggedIn: Boolean,
@@ -26,7 +27,7 @@ fun NavGraph(
     }
 
     NavHost(
-        modifier = Modifier,
+        modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {

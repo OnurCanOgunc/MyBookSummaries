@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -23,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.decode.mybooksummaries.core.ui.theme.BackgroundColor
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.onboarding.components.ButtonUI
 import com.decode.mybooksummaries.presentation.onboarding.components.IndicatorUI
 import com.decode.mybooksummaries.presentation.onboarding.components.OnboardingGraphUI
@@ -54,8 +53,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .background(color = BackgroundColor),
+            .fillMaxSize(),
         bottomBar = {
             BottomOnboarding(
                 buttonState = buttonState,
@@ -64,8 +62,9 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                 pages = pages,
                 onFinished = onFinished
             )
-        }) {
-        Column(Modifier.padding(it)) {
+        },
+        containerColor = CustomTheme.colors.backgroundColor) {
+        Column(Modifier.fillMaxSize().background(CustomTheme.colors.backgroundColor).padding(it)) {
             HorizontalPager(state = pagerState) { index ->
                 key(pages[index].title) {
                     OnboardingGraphUI(onboardingModel = pages[index])
@@ -99,7 +98,7 @@ fun BottomOnboarding(
                 ButtonUI(
                     text = buttonState.value[0],
                     backgroundColor = Color.Transparent,
-                    textColor = Color.Gray
+                    textStyle = CustomTheme.typography.titleSmall,
                 ) {
                     scope.launch {
                         if (pagerState.currentPage > 0) {
@@ -122,8 +121,7 @@ fun BottomOnboarding(
         ) {
             ButtonUI(
                 text = buttonState.value[1],
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                textColor = MaterialTheme.colorScheme.onPrimary
+                textColor = CustomTheme.colors.softWhite
             ) {
                 scope.launch {
                     if (pagerState.currentPage < pages.size - 1) {

@@ -2,7 +2,7 @@ package com.decode.mybooksummaries.data.repository
 
 import android.util.Log
 import com.decode.mybooksummaries.core.utils.Response
-import com.decode.mybooksummaries.data.local.dao.BookDao
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toBook
 import com.decode.mybooksummaries.data.mapper.toBookEntity
 import com.decode.mybooksummaries.domain.model.Book
@@ -10,10 +10,11 @@ import com.decode.mybooksummaries.domain.repository.BookRepository
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.TimeZone
@@ -23,24 +24,26 @@ import javax.inject.Named
 
 class BookRepositoryImpl @Inject constructor(
     @Named("booksRef") private val booksRef: CollectionReference,
-    private val bookDao: BookDao,
+    private val db: BookDatabase,
 ) : BookRepository {
+
     override suspend fun addBook(book: Book, isConnected: Boolean): Response<Book> {
         return runCatching {
             val bookEntity = book.toBookEntity().copy(isSynced = isConnected)
-            bookDao.insertBook(bookEntity)
+            db.bookDao().insertBook(bookEntity)
             if (isConnected) booksRef.document(book.id).set(book).await()
             Response.Success(book)
         }.getOrElse { e ->
+            Log.d("BookRepositoryImpl", "addBook: ${e.message}")
             Response.Failure(e.message ?: "Unknown error occurred while adding book")
         }
     }
 
     override fun getBooks(isConnected: Boolean) = callbackFlow {
         if (isConnected) {
-            val listener = booksRef.orderBy("title").addSnapshotListener { snapshot, error ->
+            val listener = booksRef.addSnapshotListener { snapshot, error ->
                 error?.let {
-                    trySend(Response.Failure(it.message ?: "Error getting books")).isSuccess
+                    trySend(Response.Failure(it.message ?: "Error getting books"))
                     return@addSnapshotListener
                 }
 
@@ -49,35 +52,62 @@ class BookRepositoryImpl @Inject constructor(
                 val response = if (firestoreBooks.isEmpty()) Response.Empty else Response.Success(
                     firestoreBooks
                 )
-
                 trySend(response)
             }
             awaitClose { listener.remove() }
         } else {
-            bookDao.getAllBooks()
+            val localBooks = db.bookDao().getAllBooks().first()
                 .map { books ->
-                    if (books.isNotEmpty()) {
-                        Response.Success(books.map { it.toBook() })
-                    } else {
-                        Response.Empty
-                    }
+                    books.toBook()
                 }
-                .collect { response ->
-                    trySend(response)
-                }
+            val response =
+                if (localBooks.isEmpty()) Response.Empty else Response.Success(localBooks)
+            trySend(response)
             awaitClose()
         }
     }
 
+    override fun getBooksByCategory(
+        category: String,
+        isConnected: Boolean
+    ): Flow<Response<List<Book>>> = callbackFlow {
+        if (isConnected) {
+            val listener = booksRef.whereEqualTo("genre", category)
+                .addSnapshotListener { snapshot, error ->
+                    error?.let {
+                        trySend(Response.Failure(error.message ?: "firestore error"))
+                        return@addSnapshotListener
+                    }
+
+                    val firestoreBooks =
+                        snapshot?.documents?.mapNotNull { it.toObject(Book::class.java) }.orEmpty()
+                    val response =
+                        if (firestoreBooks.isEmpty()) Response.Empty else Response.Success(
+                            firestoreBooks
+                        )
+                    trySend(response)
+                }
+
+            awaitClose { listener.remove() }
+        } else {
+            val localBooks = db.bookDao().getBooksByCategory(category)
+                .first()
+                .map { it.toBook() }
+            val response =
+                if (localBooks.isEmpty()) Response.Empty else Response.Success(localBooks)
+            trySend(response)
+        }
+    }
+
     override suspend fun getBookById(id: String, isConnected: Boolean): Response<Book> {
-        val cachedBook = bookDao.getBookById(id)?.toBook()
+        val cachedBook = db.bookDao().getBookById(id)?.toBook()
         if (cachedBook != null) return Response.Success(cachedBook)
 
         return if (isConnected) {
             runCatching {
                 val snapshot = booksRef.document(id).get().await()
                 snapshot.toObject(Book::class.java)?.let {
-                    bookDao.insertBook(it.toBookEntity())
+                    db.bookDao().insertBook(it.toBookEntity())
                     Response.Success(it)
                 } ?: Response.Empty
             }.getOrElse { e ->
@@ -88,8 +118,8 @@ class BookRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getSearchBooks(query: String) = flow {
-        bookDao.searchBooks(query).collect { bookEntities ->
+    override fun getSearchBooks(query: String, isConnected: Boolean) = flow {
+        db.bookDao().searchBooks(query).collect { bookEntities ->
             val books = bookEntities.map { it.toBook() }
             emit(if (books.isEmpty()) Response.Empty else Response.Success(books))
         }
@@ -99,7 +129,7 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun getTotalBooksRead(isConnected: Boolean): Response<Int> {
         return try {
-            val localCount = bookDao.getTotalBooksRead()
+            val localCount = db.bookDao().getTotalBooksRead()
 
             if (localCount > 0) {
                 return Response.Success(localCount)
@@ -130,7 +160,7 @@ class BookRepositoryImpl @Inject constructor(
 
             val firstDayOfMonthMillis = calendar.timeInMillis
 
-            val localCount = bookDao.getBooksReadThisMonth(firstDayOfMonthMillis)
+            val localCount = db.bookDao().getBooksReadThisMonth(firstDayOfMonthMillis)
             if (localCount > 0) return Response.Success(localCount)
 
             val firstDayOfMonthTimestamp = Timestamp(calendar.time)
@@ -140,13 +170,13 @@ class BookRepositoryImpl @Inject constructor(
                 .get()
                 .await()
             snapshot.toObjects(Book::class.java).forEach { book ->
-                bookDao.insertBook(book.toBookEntity())
+                db.bookDao().insertBook(book.toBookEntity())
             }
             Log.d("BookRepositoryImpl", "getBooksReadThisMonth: ${snapshot.size()}")
             Response.Success(snapshot.size())
         } catch (e: Exception) {
             Log.d("BookRepositoryImpl", "<getBooksReadThisMonth>: ${e.message}")
-            Response.Failure(e.message)
+            Response.Failure(e.message ?: "Error getting books read this month")
         }
     }
 
@@ -154,11 +184,11 @@ class BookRepositoryImpl @Inject constructor(
         Log.d("BookRepositoryImpl", "deleteBook: $bookId")
 
         return runCatching {
-            bookDao.markBookAsDeleted(bookId)
             if (isConnected) {
+                db.bookDao().deleteBookById(bookId)
                 booksRef.document(bookId).delete().await()
-                bookDao.deleteBookById(bookId)
-            }
+            } else db.bookDao().markBookAsDeleted(bookId)
+            Log.d("BookRepositoryImpl", "deleteBook: Book deleted successfully")
             Response.Success("Book deleted successfully")
         }.getOrElse { e ->
             Log.d("BookRepositoryImpl", "deleteBook: ${e.message}")

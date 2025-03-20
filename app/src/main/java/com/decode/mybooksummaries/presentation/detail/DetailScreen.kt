@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +36,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
@@ -56,14 +54,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.decode.mybooksummaries.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.BlurEffect
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -74,8 +70,8 @@ import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
 import com.decode.mybooksummaries.domain.model.Quote
 import com.decode.mybooksummaries.presentation.detail.component.MinimalDropdownMenu
 import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
-import com.decode.mybooksummaries.core.ui.extensions.timestampToString
-import com.decode.mybooksummaries.core.ui.theme.HomeBackgroundColor
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
+import com.decode.mybooksummaries.presentation.detail.util.splitTextByWords
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
@@ -99,6 +95,13 @@ fun DetailScreen(
         onAction(DetailContract.UiAction.LoadQuotes(bookId))
     }
 
+    LaunchedEffect(uiState.error) {
+        if (uiState.error.isNotEmpty()) {
+            delay(3000)
+            onAction(DetailContract.UiAction.OnMessageShown)
+        }
+    }
+
     uiEffect.CollectWithLifecycle {
         when (it) {
             DetailContract.UiEffect.NavigateBack -> {
@@ -111,86 +114,70 @@ fun DetailScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier,
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 18.dp, start = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    onAction(DetailContract.UiAction.OnBackClick)
+                },
+                modifier = Modifier,
             ) {
-                IconButton(
-                    onClick = {
-                        onAction(DetailContract.UiAction.OnBackClick)
-                    },
-                    modifier = Modifier,
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-                MinimalDropdownMenu(
-                    expanded = uiState.expanded,
-                    onDismissRequest = { onAction(DetailContract.UiAction.OnDismissRequest) },
-                    onMoveCartClick = { onAction(DetailContract.UiAction.OnMoveCartClick) },
-                    onEditClick = { onAction(DetailContract.UiAction.OnEditClick(bookId)) },
-                    onDeleteClick = { onAction(DetailContract.UiAction.OnDeleteClick(bookId)) }
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = null,
+                    tint = CustomTheme.colors.textBlack
                 )
             }
-        }
-    ) { paddingValues ->
-
-        if (showDialog) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f))
-                    .graphicsLayer {
-                        renderEffect = BlurEffect(radiusX = 10f, radiusY = 10f)
-                    }
+            MinimalDropdownMenu(
+                expanded = uiState.expanded,
+                onDismissRequest = { onAction(DetailContract.UiAction.OnDismissRequest) },
+                onMoveCartClick = { onAction(DetailContract.UiAction.OnMoveCartClick) },
+                onEditClick = { onAction(DetailContract.UiAction.OnEditClick(bookId)) },
+                onDeleteClick = { onAction(DetailContract.UiAction.OnDeleteClick(bookId)) }
             )
         }
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(HomeBackgroundColor)
-                .padding(paddingValues),
-        ) {
-            Header(
-                imageBitmap = imageBitmap,
-                title = uiState.book.title,
-                author = uiState.book.author,
-                genre = uiState.book.genre,
-                startedDate = uiState.book.startedReadingDate.timestampToString(),
-                currentPage = uiState.book.currentPage,
-                pageCount = uiState.book.pageCount
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            BookSummary(
-                summary = uiState.book.summary,
-                showFullSummary = showDialog,
-                onReadMoreClick = {
-                    showDialog = it
-                }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            FavoriteQuotes(
-                quote = uiState.quote,
-                onQuoteChange = { onAction(DetailContract.UiAction.QuoteChange(it)) },
-                quotes = uiState.quotes,
-                onQuoteDelete = { onAction(DetailContract.UiAction.DeleteQuote(it)) },
-                onQuoteAdd = {
-                    Log.d("FavoriteQuotes", "Adding quote: ${uiState.quote}")
-                    onAction(DetailContract.UiAction.AddQuote(uiState.quote))
-                }
-            )
-
-        }
+        Header(
+            imageBitmap = imageBitmap,
+            title = uiState.book.title,
+            author = uiState.book.author,
+            genre = uiState.book.genre,
+            startedDate = uiState.bookStartDate,
+            finishedDate = uiState.bookFinishDate,
+            currentPage = uiState.book.currentPage,
+            pageCount = uiState.book.pageCount
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        BookSummary(
+            summary = uiState.book.summary,
+            showFullSummary = showDialog,
+            onReadMoreClick = {
+                showDialog = it
+            }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        FavoriteQuotes(
+            quote = uiState.quote,
+            errorMessage = uiState.error,
+            onQuoteChange = { onAction(DetailContract.UiAction.QuoteChange(it)) },
+            quotes = uiState.quotes,
+            onQuoteDelete = { onAction(DetailContract.UiAction.DeleteQuote(it)) },
+            onQuoteAdd = {
+                Log.d("FavoriteQuotes", "Adding quote: ${uiState.quote}")
+                onAction(DetailContract.UiAction.AddQuote(uiState.quote))
+            }
+        )
     }
 }
 
@@ -202,13 +189,13 @@ fun Header(
     author: String,
     genre: String,
     startedDate: String,
+    finishedDate: String,
     currentPage: String,
     pageCount: String,
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -227,34 +214,42 @@ fun Header(
         ) {
             Text(
                 text = title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+                style = CustomTheme.typography.titleLarge,
+                color = CustomTheme.colors.textBlack,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 text = author,
-                fontSize = 16.sp,
-                color = Color.LightGray
+                style = CustomTheme.typography.bodyLarge,
+                color = CustomTheme.colors.slateGray
             )
 
             Text(
                 text = stringResource(R.string.started, startedDate),
-                fontSize = 14.sp,
-                color = Color.LightGray
+                style = CustomTheme.typography.bodyMedium,
+                color = CustomTheme.colors.slateGray
+            )
+
+            Text(
+                text = stringResource(R.string.finished, finishedDate),
+                style = CustomTheme.typography.bodyMedium,
+                color = CustomTheme.colors.slateGray
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(
                 modifier = Modifier
-                    .background(Color.DarkGray, shape = RoundedCornerShape(8.dp))
+                    .background(CustomTheme.colors.charcoalBlack, shape = RoundedCornerShape(8.dp))
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
                     text = genre,
-                    fontSize = 14.sp,
-                    color = Color.White
+                    style = CustomTheme.typography.bodySmall,
+                    color = CustomTheme.colors.softWhite,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
 
@@ -270,8 +265,9 @@ fun BookPage(currentPage: String, pageCount: String) {
     Column {
         Text(
             text = stringResource(R.string.reading_progress),
-            fontSize = 14.sp,
-            color = Color.Gray
+            style = CustomTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = CustomTheme.colors.slateGray
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -282,16 +278,16 @@ fun BookPage(currentPage: String, pageCount: String) {
                 .fillMaxWidth()
                 .height(6.dp)
                 .clip(RoundedCornerShape(50)),
-            color = Color(0xFF4A90E2),
-            trackColor = Color.LightGray
+            color = CustomTheme.colors.deepRose,
+            trackColor = CustomTheme.colors.slateGray,
         )
 
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
             text = stringResource(R.string.pages, currentPage, pageCount),
-            fontSize = 12.sp,
-            color = Color.LightGray,
+            style = CustomTheme.typography.bodySmall,
+            color = CustomTheme.colors.slateGray,
             modifier = Modifier.align(Alignment.End)
         )
     }
@@ -307,27 +303,28 @@ fun BookSummary(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp)
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth(),
             tonalElevation = 4.dp,
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            color = CustomTheme.colors.charcoalBlack
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
                     text = stringResource(R.string.summary),
-                    fontSize = 18.sp,
+                    style = CustomTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    color = CustomTheme.colors.textWhite
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = summary,
-                    fontSize = 16.sp,
-                    color = Color.Black,
+                    style = CustomTheme.typography.bodyMedium,
+                    color = CustomTheme.colors.softWhite,
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -336,7 +333,11 @@ fun BookSummary(
                     onClick = { onReadMoreClick(true) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text(stringResource(R.string.read_more))
+                    Text(
+                        stringResource(R.string.read_more),
+                        color = CustomTheme.colors.softWhite,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
@@ -349,30 +350,38 @@ fun BookSummary(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SummaryPager(summary: String, onDismiss: () -> Unit) {
-    val words = summary.chunked(620)
+    val words = splitTextByWords(summary,700)
     val pagerState = rememberPagerState(pageCount = { words.size })
 
     Dialog(onDismissRequest = onDismiss) {
-        Surface(shape = RoundedCornerShape(12.dp), modifier = Modifier.height(600.dp)) {
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.height(600.dp),
+            color = CustomTheme.colors.charcoalBlack
+        ) {
             HorizontalPager(state = pagerState) { page ->
+
                 Column(
                     modifier = Modifier
                         .padding(20.dp)
-                        .fillMaxSize()
                 ) {
                     Text(
                         text = words[page],
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Justify
+                        style = CustomTheme.typography.bodyLarge,
+                        color = CustomTheme.colors.softWhite,
+                        maxLines = 22,
+                        overflow = TextOverflow.Clip
                     )
+                    Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        "${page + 1}/${words.size}",
+                        "${page + 1}/${pagerState.pageCount}",
                         modifier = Modifier
                             .align(Alignment.End)
-                            .padding(top = 10.dp)
+                            .padding(top = 10.dp),
+                        style = CustomTheme.typography.bodySmall,
+                        color = CustomTheme.colors.softWhite
                     )
                 }
             }
@@ -384,21 +393,23 @@ fun SummaryPager(summary: String, onDismiss: () -> Unit) {
 fun FavoriteQuotes(
     modifier: Modifier = Modifier,
     quote: String,
+    errorMessage: String = "",
     onQuoteChange: (String) -> Unit,
     quotes: List<Quote>,
     onQuoteDelete: (Quote) -> Unit,
     onQuoteAdd: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp)
     ) {
         Text(
             text = stringResource(R.string.favorite_quotes),
-            fontSize = 18.sp,
+            style = CustomTheme.typography.bodyExtraLarge,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = CustomTheme.colors.textBlack
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
@@ -412,44 +423,50 @@ fun FavoriteQuotes(
                 modifier = Modifier
                     .weight(1f),
                 shape = RoundedCornerShape(12.dp),
+                textStyle = TextStyle(textAlign = TextAlign.Start),
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.White,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.LightGray,
-                    unfocusedLabelColor = Color.LightGray,
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray,
-                ),
-                textStyle = TextStyle(textAlign = TextAlign.Start)
+                    focusedIndicatorColor = CustomTheme.colors.electricOrange,
+                    unfocusedIndicatorColor = CustomTheme.colors.coolGray,
+                    focusedContainerColor = CustomTheme.colors.softWhite,
+                    unfocusedContainerColor = CustomTheme.colors.softWhite,
+                    unfocusedLabelColor = CustomTheme.colors.coolGray,
+                    focusedLabelColor = CustomTheme.colors.coolGray,
+                    cursorColor = CustomTheme.colors.coolGray,
+                )
             )
             Button(
                 onClick = {
-                    if (quote.isNotEmpty()) {
-                        onQuoteAdd()
-                    }
+                    onQuoteAdd()
+                    focusManager.clearFocus()
                 },
                 modifier = Modifier
                     .wrapContentHeight()
                     .padding(start = 8.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4A90E2)
+                    containerColor = CustomTheme.colors.charcoalBlack,
                 )
             ) {
-                Text("Add", color = Color.White)
+                Text("Add", color = CustomTheme.colors.softWhite)
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
 
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = CustomTheme.colors.errorColor,
+                style = CustomTheme.typography.titleSmall,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp),
+            )
+        }
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(quotes, key = {it.id}) { quote ->
+            items(quotes, key = { it.id }) { quote ->
                 SwipeToDeleteContainer(
                     item = quote,
                     onDelete = onQuoteDelete
@@ -481,7 +498,7 @@ fun SwipeToDeleteContainer(
     )
 
     LaunchedEffect(key1 = isRemoved) {
-        if(isRemoved) {
+        if (isRemoved) {
             delay(animationDuration.toLong())
             onDelete(item)
         }
@@ -496,14 +513,15 @@ fun SwipeToDeleteContainer(
     ) {
         SwipeToDismissBox(
             state = state,
-            backgroundContent  = {
+            backgroundContent = {
                 DeleteBackground(swipeDismissState = state)
             },
             content = {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    elevation = CardDefaults.elevatedCardElevation(3.dp)
+                    elevation = CardDefaults.elevatedCardElevation(3.dp),
+                    colors = CardDefaults.cardColors(containerColor = CustomTheme.colors.charcoalBlack)
                 ) {
                     Row(
                         modifier = Modifier.padding(10.dp),
@@ -512,7 +530,7 @@ fun SwipeToDeleteContainer(
                         Text(
                             text = "\"${item.quote}\"",
                             modifier = Modifier.weight(1f),
-                            color = Color.Black
+                            color = CustomTheme.colors.textWhite
                         )
                     }
                 }
@@ -527,20 +545,20 @@ fun DeleteBackground(
     swipeDismissState: SwipeToDismissBoxState
 ) {
     val color = if (swipeDismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-        Color.Red
+        CustomTheme.colors.errorColor
     } else Color.Transparent
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color, shape = RoundedCornerShape(12.dp))
-            .padding(16.dp),
+            .padding(6.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
         Icon(
             imageVector = Icons.Default.Delete,
             contentDescription = null,
-            tint = Color.White
+            tint = CustomTheme.colors.softWhite
         )
     }
 }

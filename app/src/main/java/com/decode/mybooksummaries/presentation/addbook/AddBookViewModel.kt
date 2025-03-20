@@ -27,52 +27,53 @@ class AddBookViewModel @Inject constructor(
         viewModelScope.launch {
             when (uiAction) {
                 UiAction.OnAddBookClick -> onAddBookClick()
-                UiAction.OnCancelClick -> emitUiEffect(UiEffect.NavigateBack)
-                is UiAction.OnAuthorChange -> updateUiState { copy(author = uiAction.author) }
-                is UiAction.OnCurrentPageChange -> updateUiState { copy(currentPage = uiAction.currentPage) }
-                is UiAction.OnFinishedReadingDateChange -> updateFinishedReadingDate(
-                    uiAction.publicationDate
-                )
-
-                is UiAction.OnGenreChange -> updateUiState { copy(genre = uiAction.genre) }
-                is UiAction.OnImageUriChange -> updateUiState { copy(imageBase64 = uiAction.imageUri) }
-                is UiAction.OnPageCountChange -> updateUiState { copy(pageCount = uiAction.pageCount) }
-                is UiAction.OnReadingStatusChange -> updateUiState {
-                    copy(
-                        readingStatus = uiAction.readingStatus
-                    )
-                }
-
-                is UiAction.OnStartedReadingDateChange -> updateStartedReadingDate(
-                    uiAction.publicationDate
-                )
-
-                is UiAction.OnSummaryChange -> updateUiState { copy(summary = uiAction.summary) }
-                is UiAction.OnTitleChange -> updateUiState { copy(title = uiAction.title) }
-                UiAction.OnBackClick -> emitUiEffect(UiEffect.NavigateBack)
-                is UiAction.OnDatePickerTypeChange -> updateUiState {
-                    copy(
-                        datePickerType = uiAction.datePickerType
-                    )
-                }
-
+                UiAction.OnCancelClick, UiAction.OnBackClick -> emitUiEffect(UiEffect.NavigateBack)
+                is UiAction.OnTitleChange -> updateBook { copy(title = uiAction.title) }
+                is UiAction.OnAuthorChange -> updateBook { copy(author = uiAction.author) }
+                is UiAction.OnPageCountChange -> updateBook { copy(pageCount = uiAction.pageCount) }
+                is UiAction.OnCurrentPageChange -> updateCurrentPage(uiAction.currentPage)
+                is UiAction.OnGenreChange -> updateBook { copy(genre = uiAction.genre) }
+                is UiAction.OnSummaryChange -> updateBook { copy(summary = uiAction.summary) }
+                is UiAction.OnReadingStatusChange -> updateBook { copy(readingStatus = uiAction.readingStatus) }
+                is UiAction.OnStartedReadingDateChange -> updateStartedReadingDate(uiAction.publicationDate)
+                is UiAction.OnFinishedReadingDateChange -> updateFinishedReadingDate(uiAction.publicationDate)
+                is UiAction.OnImageUriChange -> updateBook { copy(imageUrl = uiAction.imageUri) }
                 is UiAction.OnImageSelected -> updateUiState { copy(imageUri = uiAction.imageUri) }
-                is UiAction.LoadBook -> getBookId(uiAction.bookId)
+                is UiAction.OnDatePickerTypeChange -> updateUiState { copy(datePickerType = uiAction.datePickerType) }
+                is UiAction.LoadBook -> getBookById(uiAction.bookId)
             }
         }
     }
 
+    private fun updateBook(update: Book.() -> Book) {
+        updateUiState { copy(book = book.update()) }
+    }
+
+    private fun updateCurrentPage(currentPage: String) {
+        if (currentPage.isNotEmpty() && currentPage.toInt() > uiState.value.book.pageCount.toInt()) {
+            updateUiState { copy(message = "Current page cannot be greater than total pages") }
+            return
+        }
+        updateBook { copy(currentPage = currentPage) }
+    }
+
     private fun updateStartedReadingDate(publicationDate: Long?) {
         val timestamp = publicationDate?.let { Timestamp(Date(it)) }
-        updateUiState { copy(startedReadingDate = timestamp) }
+        updateBook { copy(startedReadingDate = timestamp) }
     }
 
     private fun updateFinishedReadingDate(publicationDate: Long?) {
+        publicationDate?.let {
+            if (it <= (uiState.value.book.startedReadingDate?.toDate()?.time ?: 0)) {
+                updateUiState { copy(message = "Finished reading date cannot be before started reading date") }
+                return
+            }
+        }
         val timestamp = publicationDate?.let { Timestamp(Date(it)) }
-        updateUiState { copy(finishedReadingDate = timestamp) }
+        updateBook { copy(finishedReadingDate = timestamp) }
     }
 
-    private fun getBookId(bookId: String) {
+    private fun getBookById(bookId: String) {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
             isConnected.collectLatest { connected ->
@@ -80,18 +81,8 @@ class AddBookViewModel @Inject constructor(
                     is Response.Success -> {
                         updateUiState {
                             copy(
-                                bookId = result.data.id,
-                                title = result.data.title,
-                                author = result.data.author,
-                                pageCount = result.data.pageCount,
-                                currentPage = result.data.currentPage,
-                                genre = result.data.genre,
-                                summary = result.data.summary,
-                                readingStatus = result.data.readingStatus,
-                                startedReadingDate = result.data.startedReadingDate,
-                                finishedReadingDate = result.data.finishedReadingDate,
+                                book = result.data,
                                 imageUri = result.data.imageUrl.base64ToBitmap(),
-                                imageBase64 = result.data.imageUrl,
                                 isLoading = false,
                                 message = "Book fetched successfully!"
                             )
@@ -113,7 +104,6 @@ class AddBookViewModel @Inject constructor(
 
     private fun onAddBookClick() = viewModelScope.launch {
         Log.e("AddBookScreen", "onAddBookClick called")
-        bookFromState()
         isConnected.collectLatest { connected ->
             Log.d("AddBookScreen", "Connected: $connected")
             val book = uiState.value.book
@@ -139,29 +129,6 @@ class AddBookViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun bookFromState() {
-        Log.e("AddBookScreen", "onAddBookClick called")
-        updateUiState {
-            copy(
-                isLoading = true,
-                book = Book(
-                    id = bookId,
-                    title = title,
-                    author = author,
-                    currentPage = currentPage,
-                    genre = genre,
-                    summary = summary,
-                    readingStatus = readingStatus,
-                    startedReadingDate = startedReadingDate,
-                    finishedReadingDate = finishedReadingDate,
-                    pageCount = pageCount,
-                    imageUrl = imageBase64 ?: ""
-                )
-            )
-        }
-
     }
 
 }

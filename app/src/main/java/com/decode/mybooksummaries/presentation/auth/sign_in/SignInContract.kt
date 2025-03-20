@@ -7,24 +7,24 @@ object SignInContract {
         val dialogVisible: Boolean = false,
         val isLoading: Boolean = false,
         val passwordVisibility: Boolean = false,
-        val message: String? = null
+        val message: String = ""
     )
     sealed interface UiAction {
         data class OnEmailChange(val email: String) : UiAction
         data class OnPasswordChange(val password: String) : UiAction
-        object OnDialogDismiss : UiAction
-        object OnSignInClick : UiAction
-        object OnSignUpClick : UiAction
-        object OnResetPasswordClick : UiAction
-        object OnSendRestPasswordEmailClick : UiAction
-        object OnPasswordVisibilityClick : UiAction
-        object OnMessageShown : UiAction
-        object OnBackClick : UiAction
+        data object OnDialogDismiss : UiAction
+        data object OnSignInClick : UiAction
+        data object OnSignUpClick : UiAction
+        data object OnResetPasswordClick : UiAction
+        data object OnSendRestPasswordEmailClick : UiAction
+        data object OnPasswordVisibilityClick : UiAction
+        data object OnMessageShown : UiAction
+        data object OnBackClick : UiAction
     }
     sealed interface UiEffect {
-        object NavigateHome : UiEffect
-        object NavigateSignUp : UiEffect
-        object NavigateBack : UiEffect
+        data object NavigateHome : UiEffect
+        data object NavigateSignUp : UiEffect
+        data object NavigateBack : UiEffect
 
     }
 }

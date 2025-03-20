@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.data.workers
+package com.decode.mybooksummaries.data.worker
 
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy

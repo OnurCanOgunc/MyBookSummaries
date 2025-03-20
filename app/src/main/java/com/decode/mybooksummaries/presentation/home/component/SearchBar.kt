@@ -1,6 +1,7 @@
 package com.decode.mybooksummaries.presentation.home.component
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.decode.mybooksummaries.R
-import com.decode.mybooksummaries.core.ui.theme.SearchBarContainerColor
+import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun SearchBar(
@@ -40,9 +41,20 @@ fun SearchBar(
         value = searchText,
         shape = RoundedCornerShape(12.dp),
         onValueChange = updateSearchQuery,
-        placeholder = { Text(stringResource(R.string.search_books)) },
+        placeholder = {
+            Text(
+                stringResource(R.string.search_books),
+                color = CustomTheme.colors.coolGray,
+                style = CustomTheme.typography.titleMedium
+            )
+        },
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .border(
+                color = CustomTheme.colors.textWhite,
+                width = 1.dp,
+                shape = RoundedCornerShape(12.dp)
+            ),
         leadingIcon = {
             IconButton(onClick = {
                 keyboardController?.hide()
@@ -51,7 +63,8 @@ fun SearchBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(R.string.search)
+                    contentDescription = stringResource(R.string.search),
+                    tint = CustomTheme.colors.softWhite
                 )
             }
         },
@@ -79,27 +92,21 @@ fun SearchBar(
                             )
                         },
                         imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(R.string.clear_icon)
+                        contentDescription = stringResource(R.string.clear_icon),
+                        tint = CustomTheme.colors.softWhite
                     )
                 }
             }
         },
         singleLine = true,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = SearchBarContainerColor,
-            unfocusedContainerColor = SearchBarContainerColor,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            unfocusedIndicatorColor = Color.Transparent,
+            focusedTextColor = CustomTheme.colors.softWhite,
+            unfocusedTextColor = CustomTheme.colors.softWhite,
+            focusedContainerColor = CustomTheme.colors.charcoalBlack,
+            unfocusedContainerColor = CustomTheme.colors.charcoalBlack,
+            cursorColor = CustomTheme.colors.softWhite,
             focusedIndicatorColor = Color.Transparent,
-            cursorColor = Color.LightGray,
-            focusedLeadingIconColor = Color.LightGray,
-            focusedTrailingIconColor = Color.LightGray,
-            unfocusedLeadingIconColor = Color.LightGray,
-            unfocusedTrailingIconColor = Color.LightGray,
-            focusedPlaceholderColor = Color.LightGray,
-            unfocusedPlaceholderColor = Color.LightGray
-
+            unfocusedIndicatorColor = Color.Transparent,
         ),
     )
 }

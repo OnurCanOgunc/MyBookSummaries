@@ -2,7 +2,7 @@ package com.decode.mybooksummaries.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.decode.mybooksummaries.data.workers.SyncWorkManager
+import com.decode.mybooksummaries.data.worker.SyncWorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
