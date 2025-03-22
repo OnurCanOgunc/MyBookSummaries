@@ -104,6 +104,7 @@ class DetailViewModel @Inject constructor(
                 }
 
                 is Response.Failure -> {
+                    Log.d("DetailViewModel", "Quote adding failed: ${result.message}")
                     updateUiState {
                         copy(
                             isLoading = false,
@@ -134,10 +135,12 @@ class DetailViewModel @Inject constructor(
                 quoteUseCase.getQuotes(bookId, connected).collectLatest { result ->
                     when (result) {
                         is Response.Success -> {
+                            Log.d("DetailViewModel", "getQuotes: ${result.data}")
                             updateUiState { copy(isLoading = false, quotes = result.data) }
                         }
 
                         is Response.Failure -> {
+                            Log.d("DetailViewModel", "getQuotes: ${result.message}")
                             updateUiState { copy(isLoading = false, error = result.message) }
                         }
 

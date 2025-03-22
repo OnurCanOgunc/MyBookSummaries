@@ -8,7 +8,9 @@ import com.decode.mybooksummaries.data.mapper.toBookEntity
 import com.decode.mybooksummaries.domain.model.Book
 import com.decode.mybooksummaries.domain.repository.BookRepository
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -19,19 +21,23 @@ import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
-import javax.inject.Named
-
 
 class BookRepositoryImpl @Inject constructor(
-    @Named("booksRef") private val booksRef: CollectionReference,
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth,
     private val db: BookDatabase,
 ) : BookRepository {
+
+    private val booksRef: CollectionReference
+        get() = firestore.collection("users").document(auth.currentUser?.uid ?: "")
+            .collection("books")
 
     override suspend fun addBook(book: Book, isConnected: Boolean): Response<Book> {
         return runCatching {
             val bookEntity = book.toBookEntity().copy(isSynced = isConnected)
             db.bookDao().insertBook(bookEntity)
-            if (isConnected) booksRef.document(book.id).set(book).await()
+            if (isConnected) booksRef.document(book.id)
+                .set(book.copy(userId = auth.currentUser?.uid)).await()
             Response.Success(book)
         }.getOrElse { e ->
             Log.d("BookRepositoryImpl", "addBook: ${e.message}")
@@ -41,28 +47,28 @@ class BookRepositoryImpl @Inject constructor(
 
     override fun getBooks(isConnected: Boolean) = callbackFlow {
         if (isConnected) {
-            val listener = booksRef.addSnapshotListener { snapshot, error ->
-                error?.let {
-                    trySend(Response.Failure(it.message ?: "Error getting books"))
-                    return@addSnapshotListener
-                }
+            val listener = booksRef
+                .addSnapshotListener { snapshot, error ->
+                    error?.let {
+                        trySend(Response.Failure(it.message ?: "Error getting books"))
+                        return@addSnapshotListener
+                    }
 
-                val firestoreBooks =
-                    snapshot?.documents?.mapNotNull { it.toObject(Book::class.java) }.orEmpty()
-                val response = if (firestoreBooks.isEmpty()) Response.Empty else Response.Success(
-                    firestoreBooks
-                )
-                trySend(response)
-            }
+                    val firestoreBooks = snapshot?.documents
+                        ?.mapNotNull { it.toObject(Book::class.java) }
+                        .orEmpty()
+
+                    Log.d("BookRepositoryImpl", "Fetched books: $firestoreBooks")
+                    trySend(
+                        if (firestoreBooks.isEmpty()) Response.Empty else Response.Success(
+                            firestoreBooks
+                        )
+                    )
+                }
             awaitClose { listener.remove() }
         } else {
-            val localBooks = db.bookDao().getAllBooks().first()
-                .map { books ->
-                    books.toBook()
-                }
-            val response =
-                if (localBooks.isEmpty()) Response.Empty else Response.Success(localBooks)
-            trySend(response)
+            val localBooks = db.bookDao().getAllBooks().first().map { it.toBook() }
+            trySend(if (localBooks.isEmpty()) Response.Empty else Response.Success(localBooks))
             awaitClose()
         }
     }
@@ -72,7 +78,8 @@ class BookRepositoryImpl @Inject constructor(
         isConnected: Boolean
     ): Flow<Response<List<Book>>> = callbackFlow {
         if (isConnected) {
-            val listener = booksRef.whereEqualTo("genre", category)
+            val listener = booksRef
+                .whereEqualTo("genre", category)
                 .addSnapshotListener { snapshot, error ->
                     error?.let {
                         trySend(Response.Failure(error.message ?: "firestore error"))
@@ -96,6 +103,7 @@ class BookRepositoryImpl @Inject constructor(
             val response =
                 if (localBooks.isEmpty()) Response.Empty else Response.Success(localBooks)
             trySend(response)
+            awaitClose()
         }
     }
 
@@ -129,19 +137,16 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun getTotalBooksRead(isConnected: Boolean): Response<Int> {
         return try {
-            val localCount = db.bookDao().getTotalBooksRead()
-
-            if (localCount > 0) {
-                return Response.Success(localCount)
-            }
-
             if (isConnected) {
                 val remoteCount =
-                    booksRef.whereEqualTo("readingStatus", "Read").get().await().size()
+                    booksRef
+                        .whereEqualTo("readingStatus", "Finished").get().await().size()
+                Log.d("BookRepositoryImpl", "getTotalBooksRead: $remoteCount")
                 return Response.Success(remoteCount)
+            } else {
+                val localCount = db.bookDao().getTotalBooksRead()
+                Response.Success(localCount)
             }
-
-            Response.Failure("No data available locally and no internet connection")
         } catch (e: Exception) {
             Response.Failure(e.message ?: "Error getting total books read")
         }
@@ -165,7 +170,8 @@ class BookRepositoryImpl @Inject constructor(
 
             val firstDayOfMonthTimestamp = Timestamp(calendar.time)
             val snapshot = booksRef
-                .whereEqualTo("readingStatus", "Read")
+                .whereEqualTo("userId", auth.currentUser?.uid)
+                .whereEqualTo("readingStatus", "Finished")
                 .whereGreaterThanOrEqualTo("finishedReadingDate", firstDayOfMonthTimestamp)
                 .get()
                 .await()

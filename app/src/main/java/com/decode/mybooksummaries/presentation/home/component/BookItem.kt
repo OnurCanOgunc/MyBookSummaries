@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.presentation.home.component
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
+
 @Composable
 fun BookItem(
     author: String,
@@ -55,6 +55,7 @@ fun BookItem(
             0f
         }
     }
+
     Card(
         modifier = Modifier
             .width(120.dp)
@@ -66,13 +67,14 @@ fun BookItem(
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             AsyncImage(
-                model = bitmap.value?: R.drawable.img,
+                model = bitmap.value ?: R.drawable.img,
                 contentDescription = stringResource(R.string.book_image, author),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3f / 4f)
                     .clip(RoundedCornerShape(8.dp))
+
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -80,7 +82,7 @@ fun BookItem(
                 style = CustomTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = CustomTheme.colors.textWhite
+                color = CustomTheme.colors.textWhite,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(

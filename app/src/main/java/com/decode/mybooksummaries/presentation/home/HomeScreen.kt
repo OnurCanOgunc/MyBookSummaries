@@ -51,7 +51,6 @@ fun HomeScreen(
         }
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +71,7 @@ fun HomeScreen(
             }
         )
         Spacer(modifier = Modifier.height(12.dp))
-        if (uiState.books.isEmpty()) {
+        if (uiState.books.isEmpty() && uiState.searchResults.isEmpty()) {
             Spacer(modifier = Modifier.weight(5f))
             Text(
                 style = CustomTheme.typography.titleLarge,
@@ -89,7 +88,10 @@ fun HomeScreen(
                     contentColor = CustomTheme.colors.softWhite
                 )
             ) {
-                Text(text = stringResource(R.string.add_book), style = CustomTheme.typography.bodyLarge)
+                Text(
+                    text = stringResource(R.string.add_book),
+                    style = CustomTheme.typography.bodyLarge
+                )
             }
             Spacer(modifier = Modifier.weight(5f))
         }

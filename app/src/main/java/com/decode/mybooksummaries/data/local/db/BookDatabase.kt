@@ -18,5 +18,4 @@ abstract class BookDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
     abstract fun quoteDao(): QuoteDao
     abstract fun monthlyGoalDao(): MonthlyGoalDao
-
 }

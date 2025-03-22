@@ -11,16 +11,16 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(private val authRepository: AuthRepository) {
     operator fun invoke(email: String, password: String): Flow<AuthResponse> = flow {
         if (email.isEmpty() || password.isEmpty()) {
-            emit(AuthResponse.Failure("Lütfen tüm alanları doldurun"))
+            emit(AuthResponse.Failure("Please fill in all fields"))
             return@flow
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emit(AuthResponse.Failure("Geçersiz e-posta adresi"))
+            emit(AuthResponse.Failure("Invalid email address"))
             return@flow
         }
         if (password.length < 6) {
-            emit(AuthResponse.Failure("Şifre en az 6 karakter olmalıdır"))
+            emit(AuthResponse.Failure("Password must be at least 6 characters"))
             return@flow
         }
         emitAll(authRepository.loginWithEmailAndPassword(email, password))

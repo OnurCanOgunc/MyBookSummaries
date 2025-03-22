@@ -1,5 +1,10 @@
 package com.decode.mybooksummaries.presentation.auth.welcome
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +38,7 @@ import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeContract.UiEf
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeContract.UiState
 import com.decode.mybooksummaries.presentation.auth.welcome.component.CustomButton
 import kotlinx.coroutines.flow.Flow
+import androidx.compose.runtime.getValue
 
 @Composable
 fun WelcomeScreen(
@@ -72,15 +78,7 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoHeader()
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.manage_books_summaries_quotes),
-                style = CustomTheme.typography.bodyLarge,
-                color = CustomTheme.colors.textBlack,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
+
 
             Spacer(modifier = Modifier.height(35.dp))
 
@@ -95,6 +93,7 @@ fun WelcomeScreen(
 
 @Composable
 fun LogoHeader() {
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = R.drawable.logo),
@@ -108,7 +107,16 @@ fun LogoHeader() {
             text = stringResource(R.string.booknest),
             style = CustomTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = CustomTheme.colors.textBlack
+            color = CustomTheme.colors.textBlack,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.manage_books_summaries_quotes),
+            style = CustomTheme.typography.bodyLarge,
+            color = CustomTheme.colors.textBlack,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp)
         )
     }
 }

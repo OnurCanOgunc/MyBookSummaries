@@ -88,7 +88,7 @@ fun SignUpScreen(
                     text = uiState.message,
                     color = CustomTheme.colors.errorColor,
                     modifier = Modifier
-                        .align(Alignment.Start)
+                        .align(Alignment.CenterHorizontally)
                         .padding(top = 8.dp),
                 )
             }

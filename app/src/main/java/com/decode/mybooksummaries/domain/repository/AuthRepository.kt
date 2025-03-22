@@ -15,6 +15,7 @@ interface AuthRepository {
 
     fun loginWithEmailAndPassword(email: String, password: String): Flow<AuthResponse>
     fun signInWithGoogle(): Flow<AuthResponse>
+    suspend fun clearLocalData()
     suspend fun resetPassword(email: String): AuthResponse
     suspend fun signOut(): AuthResponse
     suspend fun updateDisplayName(newDisplayName: String): AuthResponse

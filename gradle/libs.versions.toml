@@ -13,12 +13,12 @@ firebaseBom = "33.7.0"
 playServicesAuth = "21.3.0"
 service = "4.4.2"
 crashlytics = "3.0.2"
-navigationCompose = "2.8.6"
+navigationCompose = "2.8.9"
 kotlinxSerializationJson = "1.6.2"
 materialIconsExtended = "1.7.7"
-credentials = "1.5.0-rc01"
+credentials = "1.5.0"
 googleid = "1.1.1"
-credentialsPlayServicesAuth = "1.5.0-rc01"
+credentialsPlayServicesAuth = "1.5.0"
 coil = "2.7.0"
 coreSplachScreen = "1.0.1"
 hilt = "2.50"
@@ -29,8 +29,8 @@ accompanist = "0.37.0"
 roomKtx = "2.6.1"
 workRuntimeKtx = "2.9.1"
 hiltWork = "1.2.0"
-appcompat = "1.6.1"
-material = "1.10.0"
+composeAnimation = "1.7.8"
+foundationCompose = "1.7.8"
 
 
 [libraries]
@@ -52,7 +52,9 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-auth = {module = "com.google.firebase:firebase-auth-ktx"}
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-compose = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+androidx-compose-animation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundationCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
@@ -77,8 +79,6 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 hilt-android-compilerx = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

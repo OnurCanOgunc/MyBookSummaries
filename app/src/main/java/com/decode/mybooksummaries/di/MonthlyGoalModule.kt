@@ -7,14 +7,11 @@ import com.decode.mybooksummaries.domain.usecase.goal.GetMonthlyGoalUseCase
 import com.decode.mybooksummaries.domain.usecase.MonthlyGoalUseCases
 import com.decode.mybooksummaries.domain.usecase.goal.SaveMonthlyGoalUseCase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -24,18 +21,10 @@ object MonthlyGoalModule {
     @Singleton
     fun provideMonthlyGoalRepository(
         db: BookDatabase,
-        @Named("monthlyGoalRef")monthlyGoalRef: CollectionReference
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore,
     ): MonthlyGoalRepository {
-        return MonthlyGoalRepositoryImpl(monthlyGoalRef,db)
-    }
-
-    @Provides
-    @Singleton
-    @Named("monthlyGoalRef")
-    fun provideMonthlyGoalsCollectionRef(auth: FirebaseAuth): CollectionReference {
-        return Firebase.firestore.collection("users")
-            .document(auth.currentUser?.uid ?: "no user")
-            .collection("monthlyGoals")
+        return MonthlyGoalRepositoryImpl(firestore,firebaseAuth,db,)
     }
 
     @Provides

@@ -6,7 +6,9 @@ import com.decode.mybooksummaries.data.mapper.toEntity
 import com.decode.mybooksummaries.data.mapper.toMonthlyGoal
 import com.decode.mybooksummaries.domain.model.MonthlyGoal
 import com.decode.mybooksummaries.domain.repository.MonthlyGoalRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -17,12 +19,16 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import javax.inject.Named
 
 class MonthlyGoalRepositoryImpl @Inject constructor(
-    @Named("monthlyGoalRef")private val monthlyGoalsRef: CollectionReference,
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth,
     private val db: BookDatabase
 ) : MonthlyGoalRepository {
+
+    private val monthlyGoalsRef: CollectionReference
+        get() = firestore.collection("users").document(auth.currentUser?.uid ?: "")
+            .collection("monthlyGoals")
 
     override suspend fun saveMonthlyGoal(
         goal: Int,
@@ -31,6 +37,7 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
         return try {
             val month = getFormattedDate()
             val monthlyGoal = MonthlyGoal(
+                userId = auth.currentUser?.uid,
                 month = month,
                 goalCount = goal,
                 isSynced = isConnected
@@ -48,24 +55,24 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getMonthlyGoal(
-        isConnected: Boolean
-    ): Flow<Response<MonthlyGoal>> = callbackFlow {
+    override fun getMonthlyGoal(isConnected: Boolean): Flow<Response<MonthlyGoal>> = callbackFlow {
         val month = getFormattedDate()
+
         val cachedGoal = db.monthlyGoalDao().getMonthlyGoal(month)
         if (cachedGoal != null) {
-            trySend(Response.Success(cachedGoal.toMonthlyGoal())).isSuccess
+            trySend(Response.Success(cachedGoal.toMonthlyGoal()))
         }
 
         if (isConnected) {
-            val listener = monthlyGoalsRef.document(month)
+            val listener = monthlyGoalsRef
+                .whereEqualTo("month", month)
                 .addSnapshotListener { snapshot, error ->
                     error?.let {
-                        trySend(Response.Failure(it.message ?: "firestore error")).isSuccess
+                        trySend(Response.Failure(it.message ?: "Firestore error"))
                         return@addSnapshotListener
                     }
 
-                    val goal = snapshot?.toObject(MonthlyGoal::class.java)
+                    val goal = snapshot?.documents?.firstOrNull()?.toObject(MonthlyGoal::class.java)
                     goal?.let {
                         CoroutineScope(Dispatchers.IO).launch {
                             db.monthlyGoalDao().insertMonthlyGoal(it.toEntity().copy(isSynced = true))
@@ -75,12 +82,10 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
                 }
 
             awaitClose { listener.remove() }
-        } else {
-            if (cachedGoal == null) {
-                trySend(Response.Empty).isSuccess
-            }
+        } else if (cachedGoal == null) {
+            trySend(Response.Empty)
+            awaitClose()
         }
-        awaitClose { }
     }
 
     override fun getFormattedDate(): String =

@@ -74,6 +74,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.foundation)
 
     implementation(libs.androidx.lifecycle.runtime.compose)
 
@@ -104,6 +105,7 @@ dependencies {
     ksp(libs.hilt.android.compilerx)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.androidx.compose.animation)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.coroutines.core)

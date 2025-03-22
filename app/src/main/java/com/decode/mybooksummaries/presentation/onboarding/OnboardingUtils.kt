@@ -2,8 +2,10 @@ package com.decode.mybooksummaries.presentation.onboarding
 
 import android.content.Context
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class OnboardingUtils(private val context: Context) {
+class OnboardingUtils @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun isOnboardingCompleted(): Boolean {
         return context.getSharedPreferences("onboarding", Context.MODE_PRIVATE)
@@ -12,7 +14,7 @@ class OnboardingUtils(private val context: Context) {
 
     fun setOnboardingCompleted() {
         context.getSharedPreferences("onboarding", Context.MODE_PRIVATE)
-            .edit() {
+            .edit {
                 putBoolean("completed", true)
             }
     }

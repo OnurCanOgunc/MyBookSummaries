@@ -25,7 +25,6 @@ fun NavGraph(
             Screens.Onboarding
         }
     }
-
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -42,5 +41,4 @@ fun NavGraph(
         authGraph(navController)
         mainGraph(navController)
     }
-
 }

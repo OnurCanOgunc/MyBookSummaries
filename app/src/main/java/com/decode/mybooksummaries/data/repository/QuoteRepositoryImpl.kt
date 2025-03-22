@@ -6,7 +6,9 @@ import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toQuoteEntity
 import com.decode.mybooksummaries.domain.model.Quote
 import com.decode.mybooksummaries.domain.repository.QuoteRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -15,12 +17,17 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Named
 
 class QuoteRepositoryImpl @Inject constructor(
-    @Named("quotesRef") private val quotesRef: CollectionReference,
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth,
     private val db: BookDatabase
 ) : QuoteRepository {
+
+    private val quotesRef: CollectionReference
+        get() = firestore.collection("users").document(auth.currentUser?.uid ?: "")
+            .collection("quotes")
+
     override suspend fun addQuote(
         quote: Quote,
         isConnected: Boolean
@@ -28,7 +35,7 @@ class QuoteRepositoryImpl @Inject constructor(
         return try {
             if (isConnected) {
                 db.quoteDao().insertQuote(quote.toQuoteEntity())
-                quotesRef.document(quote.id).set(quote).await()
+                quotesRef.document(quote.id).set(quote.copy(userId = auth.currentUser?.uid)).await()
                 Response.Success(quote)
             } else Response.Failure("No internet connection")
         } catch (e: Exception) {
@@ -40,36 +47,39 @@ class QuoteRepositoryImpl @Inject constructor(
         bookId: String,
         isConnected: Boolean
     ): Flow<Response<List<Quote>>> = callbackFlow {
-        Log.d("firestore", "Fetching quotes for bookId: $bookId")
+        val userId = auth.currentUser?.uid ?: return@callbackFlow
+        Log.d("firestore", "Fetching quotes for userId: $userId, bookId: $bookId")
+
         if (isConnected) {
             val listener = quotesRef
-                .whereEqualTo("bookId", bookId)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(Response.Failure(error.message ?: "Error fetching quotes"))
-                        Log.d("QuoteRepository", "Error fetching quotes: ${error.message}")
                         return@addSnapshotListener
                     }
-                    if (snapshot != null) {
-                        val firestoreQuotes =
-                            snapshot.documents.mapNotNull { it.toObject(Quote::class.java) }
-                        CoroutineScope(Dispatchers.IO).launch {
-                            db.quoteDao().insertQuotes(firestoreQuotes.map {
-                                it.toQuoteEntity()
-                            })
-                        }
-                        trySend(Response.Success(firestoreQuotes))
-                    } else {
-                        trySend(Response.Empty)
+
+                    val firestoreQuotes = snapshot?.documents
+                        ?.mapNotNull { it.toObject(Quote::class.java) }
+                        .orEmpty()
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        db.quoteDao().insertQuotes(firestoreQuotes.map { it.toQuoteEntity() })
                     }
+
+                    trySend(
+                        if (firestoreQuotes.isEmpty()) Response.Empty else Response.Success(
+                            firestoreQuotes
+                        )
+                    )
                 }
 
             awaitClose { listener.remove() }
         } else {
-            Response.Failure("No internet connection")
+            trySend(Response.Failure("No internet connection"))
             awaitClose()
         }
     }
+
 
     override suspend fun deleteQuote(
         quote: Quote,

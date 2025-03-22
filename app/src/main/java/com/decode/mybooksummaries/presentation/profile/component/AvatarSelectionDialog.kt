@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -68,7 +69,7 @@ fun AvatarSelectionDialog(
                         contentScale = ContentScale.Fit
                     )
                 }
-                Button(onClick = { launcher.launch("image/*") }, Modifier.padding(start = 27.dp, top = 16.dp)) {
+                Button(onClick = { launcher.launch("image/*") }, Modifier.padding(start = 27.dp, top = 16.dp), colors = ButtonDefaults.buttonColors(CustomTheme.colors.electricOrange)) {
                     Text(stringResource(R.string.select_from_gallery), color = CustomTheme.colors.softWhite)
                 }
             }

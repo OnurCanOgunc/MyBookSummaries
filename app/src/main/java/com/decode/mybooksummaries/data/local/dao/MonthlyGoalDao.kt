@@ -19,4 +19,8 @@ interface MonthlyGoalDao {
 
     @Query("SELECT * FROM monthly_goals WHERE isSynced = 0")
     suspend fun getUnsyncedGoals(): List<MonthlyGoalEntity>
+
+    @Query("DELETE FROM monthly_goals")
+    suspend fun deleteAllMonthlyGoals()
+
 }

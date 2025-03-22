@@ -11,8 +11,6 @@ import com.decode.mybooksummaries.domain.usecase.auth.ResetPasswordUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.SignOutUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.UpdateDisplayNameUseCase
 import com.decode.mybooksummaries.domain.usecase.auth.UpdatePasswordUseCase
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,11 +23,8 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun providesFirebaseAuth() = Firebase.auth
-
-    @Provides
-    @Singleton
     fun provideAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository = authRepositoryImpl
+
 
     @Provides
     @Singleton

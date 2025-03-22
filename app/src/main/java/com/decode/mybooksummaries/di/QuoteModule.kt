@@ -9,14 +9,11 @@ import com.decode.mybooksummaries.domain.usecase.quotes.DeleteAllQuotesUseCase
 import com.decode.mybooksummaries.domain.usecase.quotes.DeleteQuotesUseCase
 import com.decode.mybooksummaries.domain.usecase.quotes.GetQuotesUseCase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -25,9 +22,10 @@ object QuoteModule {
     @Provides
     @Singleton
     fun provideQuoteRepository(
-        @Named("quotesRef") quotesRef: CollectionReference,
+       firestore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
         db: BookDatabase): QuoteRepository {
-        return QuoteRepositoryImpl(quotesRef = quotesRef, db = db)
+        return QuoteRepositoryImpl(firestore = firestore, db = db,auth = firebaseAuth)
     }
 
     @Provides
@@ -39,13 +37,5 @@ object QuoteModule {
             deleteQuote = DeleteQuotesUseCase(repository),
             deleteAllQuotes = DeleteAllQuotesUseCase(repository)
         )
-    }
-
-    @Provides
-    @Singleton
-    @Named("quotesRef")
-    fun provideCollectionRef(auth: FirebaseAuth): CollectionReference {
-        return Firebase.firestore.collection("users").document(auth.currentUser?.uid ?: "no user")
-            .collection("quotes")
     }
 }

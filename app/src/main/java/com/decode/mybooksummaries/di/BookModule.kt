@@ -13,14 +13,11 @@ import com.decode.mybooksummaries.domain.usecase.book.GetBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetSearchBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetTotalBooksReadUseCase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -30,9 +27,11 @@ object BookModule {
     @Singleton
     fun provideBookRepository(
         db: BookDatabase,
-        @Named("booksRef") bookRef: CollectionReference
+        firestore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
     ): BookRepository = BookRepositoryImpl(
-        booksRef = bookRef,
+        firestore = firestore,
+        auth = firebaseAuth,
         db = db)
 
     @Provides
@@ -47,13 +46,5 @@ object BookModule {
         getBooksReadThisMonth = GetBooksReadThisMonthUseCase(repository),
         getBooksByCategory = GetBooksByCategoryUseCase(repository)
     )
-
-    @Provides
-    @Singleton
-    @Named("booksRef")
-    fun provideCollectionRef(auth: FirebaseAuth): CollectionReference {
-        return Firebase.firestore.collection("users").document(auth.currentUser?.uid ?: "no user")
-            .collection("books")
-    }
 
 }

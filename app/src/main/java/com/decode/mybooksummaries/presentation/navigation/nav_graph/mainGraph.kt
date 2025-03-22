@@ -22,7 +22,9 @@ import com.decode.mybooksummaries.presentation.profile.ProfileViewModel
 
 fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     navigation<Screens.Main>(startDestination = Screens.Main.Home) {
-        composable<Screens.Main.Home> {
+        composable<Screens.Main.Home>(
+
+        ) {
             val viewModel = hiltViewModel<HomeViewModel>()
             val uiEffect = viewModel.uiEffect
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,7 +34,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 uiEffect = uiEffect,
                 onAddClick = { navController.navigate(Screens.Main.AddBook()) },
                 onDetailClick = { navController.navigate(Screens.Main.BookDetail(it))},
-                onProfileClick = { navController.navigate(Screens.Main.Profile) }
+                onProfileClick = { navController.navigate(Screens.Main.Profile) },
             )
         }
         composable<Screens.Main.AddBook> {
@@ -60,7 +62,8 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 popBackStack = { navController.popBackStack() },
                 onAddBookClick = {
                     navController.navigate(Screens.Main.AddBook(it))
-                })
+                },
+            )
         }
         composable<Screens.Main.Profile> {
             val viewModel = hiltViewModel<ProfileViewModel>()

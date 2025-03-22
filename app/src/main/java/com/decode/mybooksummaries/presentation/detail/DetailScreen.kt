@@ -82,7 +82,6 @@ fun DetailScreen(
     uiEffect: Flow<DetailContract.UiEffect>,
     onAction: (DetailContract.UiAction) -> Unit,
     popBackStack: () -> Unit,
-    modifier: Modifier = Modifier,
     onAddBookClick: (String) -> Unit
 ) {
     val imageBitmap by produceState<Bitmap?>(initialValue = null, key1 = uiState.book.imageUrl) {
@@ -115,7 +114,7 @@ fun DetailScreen(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
@@ -183,7 +182,6 @@ fun DetailScreen(
 
 @Composable
 fun Header(
-    modifier: Modifier = Modifier,
     imageBitmap: Bitmap?,
     title: String,
     author: String,
@@ -193,8 +191,9 @@ fun Header(
     currentPage: String,
     pageCount: String,
 ) {
+
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -223,7 +222,7 @@ fun Header(
             Text(
                 text = author,
                 style = CustomTheme.typography.bodyLarge,
-                color = CustomTheme.colors.slateGray
+                color = CustomTheme.colors.slateGray,
             )
 
             Text(
@@ -242,7 +241,10 @@ fun Header(
 
             Box(
                 modifier = Modifier
-                    .background(CustomTheme.colors.charcoalBlack, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        CustomTheme.colors.charcoalBlack,
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
@@ -257,6 +259,7 @@ fun Header(
 
             BookPage(currentPage = currentPage, pageCount = pageCount)
         }
+
     }
 }
 
@@ -352,7 +355,7 @@ fun BookSummary(
 
 @Composable
 fun SummaryPager(summary: String, onDismiss: () -> Unit) {
-    val words = splitTextByWords(summary,700)
+    val words = splitTextByWords(summary, 700)
     val pagerState = rememberPagerState(pageCount = { words.size })
 
     Dialog(onDismissRequest = onDismiss) {

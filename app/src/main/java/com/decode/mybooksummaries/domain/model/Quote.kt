@@ -4,6 +4,7 @@ import java.util.UUID
 
 data class Quote(
     val id: String = UUID.randomUUID().toString(),
-    val bookId: String?="",
-    val quote: String?="",
+    val userId: String? = "",
+    val bookId: String? = "",
+    val quote: String? = "",
 )

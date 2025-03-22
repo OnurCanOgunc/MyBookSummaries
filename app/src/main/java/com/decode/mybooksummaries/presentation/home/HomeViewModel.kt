@@ -65,14 +65,17 @@ class HomeViewModel @Inject constructor(
                 bookUseCase.getBooks(connected).collect { response ->
                     when (response) {
                         is Response.Success -> {
+                            Log.d("HomeViewModel", "getBooks: ${response.data.size}")
                             updateUiState { copy(books = response.data, isLoading = false) }
                         }
 
                         is Response.Failure -> {
+                            Log.d("HomeViewModel", "getBooks: ${response.message}")
                             updateUiState { copy(error = response.message, isLoading = false) }
                         }
 
                         is Response.Empty -> {
+                            Log.d("HomeViewModel", "getBooks: Empty")
                             updateUiState {
                                 copy(
                                     error = "No books found",

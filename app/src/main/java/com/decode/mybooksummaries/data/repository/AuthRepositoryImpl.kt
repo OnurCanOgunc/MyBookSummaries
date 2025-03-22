@@ -7,6 +7,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.utils.AuthResponse
+import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.domain.repository.AuthRepository
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -30,6 +31,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
+    private val db: BookDatabase,
     @ApplicationContext private val context: Context
 ) : AuthRepository {
 
@@ -147,11 +149,18 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signOut(): AuthResponse {
         return try {
             auth.signOut()
+            clearLocalData()
             AuthResponse.Success
         } catch (e: Exception) {
             val errorMessage = handleFirebaseAuthException(e)
             AuthResponse.Failure(errorMessage)
         }
+    }
+
+    override suspend fun clearLocalData() {
+        db.bookDao().deleteAllBooks()
+        db.quoteDao().deleteAllQuotes()
+        db.monthlyGoalDao().deleteAllMonthlyGoals()
     }
 
     override suspend fun updateDisplayName(newDisplayName: String): AuthResponse {

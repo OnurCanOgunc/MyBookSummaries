@@ -10,7 +10,7 @@ import javax.inject.Inject
 class ResetPasswordUseCase @Inject constructor(private val authRepository: AuthRepository) {
     operator fun invoke(email: String): Flow<AuthResponse> = flow {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emit(AuthResponse.Failure("Geçersiz e-posta adresi"))
+            emit(AuthResponse.Failure("Invalid email address"))
             return@flow
         }
         val response = authRepository.resetPassword(email)

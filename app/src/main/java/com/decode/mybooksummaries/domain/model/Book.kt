@@ -5,6 +5,7 @@ import java.util.UUID
 
 data class Book(
     val id: String = UUID.randomUUID().toString(),
+    val userId: String? = "",
     val title: String = "",
     val author: String = "",
     val pageCount: String = "0",
@@ -16,3 +17,4 @@ data class Book(
     val summary: String = "",
     val imageUrl: String = ""
 )
+
