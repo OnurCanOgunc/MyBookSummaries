@@ -38,7 +38,7 @@ class QuoteRepositoryImpl @Inject constructor(
                 quotesRef.document(quote.id).set(quote.copy(userId = auth.currentUser?.uid)).await()
                 Response.Success(quote)
             } else Response.Failure("No internet connection")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Response.Failure("An error occurred while adding a book")
         }
     }
