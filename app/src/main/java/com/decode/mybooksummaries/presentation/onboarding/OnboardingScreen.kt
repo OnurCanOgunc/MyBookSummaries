@@ -31,12 +31,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
-    val pages = mutableListOf(
-        OnboardingModel.FirstPage,
-        OnboardingModel.SecondPage,
-        OnboardingModel.ThirdPage,
-        OnboardingModel.FourthPage
-    )
+    val pages = remember {
+        mutableListOf(
+            OnboardingModel.FirstPage,
+            OnboardingModel.SecondPage,
+            OnboardingModel.ThirdPage,
+            OnboardingModel.FourthPage
+        )
+    }
+
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { pages.size })
     val buttonState = remember {
         derivedStateOf {
