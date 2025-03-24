@@ -170,7 +170,6 @@ class BookRepositoryImpl @Inject constructor(
 
             val firstDayOfMonthTimestamp = Timestamp(calendar.time)
             val snapshot = booksRef
-                .whereEqualTo("userId", auth.currentUser?.uid)
                 .whereEqualTo("readingStatus", "Finished")
                 .whereGreaterThanOrEqualTo("finishedReadingDate", firstDayOfMonthTimestamp)
                 .get()
