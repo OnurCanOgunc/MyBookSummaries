@@ -13,9 +13,8 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,13 +25,17 @@ import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.onboarding.components.ButtonUI
 import com.decode.mybooksummaries.presentation.onboarding.components.IndicatorUI
 import com.decode.mybooksummaries.presentation.onboarding.components.OnboardingGraphUI
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+
+@Immutable
+data class ButtonState(val leftButtonText: String, val rightButtonText: String)
 
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
-    val pages = remember {
-        mutableListOf(
+    val pages: ImmutableList<OnboardingModel> = remember {
+        persistentListOf(
             OnboardingModel.FirstPage,
             OnboardingModel.SecondPage,
             OnboardingModel.ThirdPage,
@@ -44,34 +47,34 @@ fun OnboardingScreen(onFinished: () -> Unit) {
     val buttonState = remember {
         derivedStateOf {
             when (pagerState.currentPage) {
-                0 -> mutableListOf("", "Next")
-                1 -> mutableListOf("Back", "Next")
-                2 -> mutableListOf("Back", "Next")
-                3 -> mutableListOf("Back", "Start")
-                else -> mutableListOf("", "")
+                0 -> ButtonState("", "Next")
+                1 -> ButtonState("Back", "Next")
+                2 -> ButtonState("Back", "Next")
+                3 -> ButtonState("Back", "Start")
+                else -> ButtonState("", "")
             }
         }
     }
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
         bottomBar = {
             BottomOnboarding(
-                buttonState = buttonState,
-                scope = scope,
+                buttonState = buttonState.value,
                 pagerState = pagerState,
                 pages = pages,
                 onFinished = onFinished
             )
         },
-        containerColor = CustomTheme.colors.backgroundColor) {
-        Column(Modifier.fillMaxSize().background(CustomTheme.colors.backgroundColor).padding(it)) {
-            HorizontalPager(state = pagerState) { index ->
-                key(pages[index].title) {
-                    OnboardingGraphUI(onboardingModel = pages[index])
-                }
+        containerColor = CustomTheme.colors.backgroundColor
+    ) {
+        Column(Modifier
+            .fillMaxSize()
+            .background(CustomTheme.colors.backgroundColor)
+            .padding(it)) {
+            HorizontalPager(state = pagerState, key = { pages[it].title }) { index ->
+                OnboardingGraphUI(onboardingModel = pages[index])
             }
         }
     }
@@ -79,12 +82,12 @@ fun OnboardingScreen(onFinished: () -> Unit) {
 
 @Composable
 fun BottomOnboarding(
-    buttonState: State<List<String>>,
-    scope: CoroutineScope,
+    buttonState: ButtonState,
     pagerState: PagerState,
-    pages: List<OnboardingModel>,
+    pages: ImmutableList<OnboardingModel>,
     onFinished: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,9 +100,9 @@ fun BottomOnboarding(
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.CenterStart
         ) {
-            if (buttonState.value[0].isNotEmpty()) {
+            if (buttonState.leftButtonText.isNotEmpty()) {
                 ButtonUI(
-                    text = buttonState.value[0],
+                    text = buttonState.leftButtonText,
                     backgroundColor = Color.Transparent,
                     textStyle = CustomTheme.typography.titleSmall,
                 ) {
@@ -123,7 +126,7 @@ fun BottomOnboarding(
             contentAlignment = Alignment.CenterEnd
         ) {
             ButtonUI(
-                text = buttonState.value[1],
+                text = buttonState.rightButtonText,
                 textColor = CustomTheme.colors.softWhite
             ) {
                 scope.launch {
