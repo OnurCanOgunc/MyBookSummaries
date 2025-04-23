@@ -1,5 +1,11 @@
 package com.decode.mybooksummaries.presentation.auth.sign_in
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +32,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,6 +68,7 @@ fun SignInScreen(
     popBackStack: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
+    var isMessageVisible by remember { mutableStateOf(false) }
 
     uiEffect.CollectWithLifecycle {
         when (it) {
@@ -70,7 +80,10 @@ fun SignInScreen(
 
     LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
+            isMessageVisible = true
             delay(3000)
+            isMessageVisible = false
+            delay(600)
             onAction(UiAction.OnMessageShown)
         }
     }
@@ -91,18 +104,27 @@ fun SignInScreen(
         ) {
             SignInHeader()
             SignInFields(uiState, onAction)
-            if (uiState.message.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = isMessageVisible,
+                enter = slideInVertically(
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ) + fadeIn(),
+                exit = slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ) + fadeOut()
+            ) {
                 Text(
                     text = uiState.message,
                     color = CustomTheme.colors.errorColor,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 8.dp),
-                    style = CustomTheme.typography.bodyMedium,
+                    style = CustomTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
 
                     )
-
             }
+
             SignInButton { onAction(UiAction.OnSignInClick) }
         }
 
@@ -177,7 +199,8 @@ fun SignInButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(50.dp)
+            .animateContentSize(),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = CustomTheme.colors.charcoalBlack,

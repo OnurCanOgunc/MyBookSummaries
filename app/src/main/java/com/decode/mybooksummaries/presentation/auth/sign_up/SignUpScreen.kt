@@ -1,5 +1,10 @@
 package com.decode.mybooksummaries.presentation.auth.sign_up
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +28,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,6 +59,7 @@ fun SignUpScreen(
     navigateToHome: () -> Unit = {},
     popBackStack: () -> Unit = {}
 ) {
+    var isMessageVisible by remember { mutableStateOf(false) }
 
     uiEffect.CollectWithLifecycle {
         when (it) {
@@ -62,7 +71,10 @@ fun SignUpScreen(
 
     LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
+            isMessageVisible = true
             delay(3000)
+            isMessageVisible = false
+            delay(600)
             onAction(UiAction.OnMessageShown)
         }
     }
@@ -83,13 +95,24 @@ fun SignUpScreen(
         ) {
             SignUpHeader()
             SignUpFields(uiState, onAction)
-            if (uiState.message.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = isMessageVisible,
+                enter = slideInVertically(
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ) + fadeIn(),
+                exit = slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ) + fadeOut()
+            ) {
                 Text(
                     text = uiState.message,
                     color = CustomTheme.colors.errorColor,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 8.dp),
+                    style = CustomTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
+
                 )
             }
 
