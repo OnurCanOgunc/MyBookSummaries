@@ -134,6 +134,7 @@ fun SignInHeader() {
 
 @Composable
 fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
+
     Column {
         CustomOutlinedTextField(
             value = uiState.email,
@@ -150,8 +151,7 @@ fun SignInFields(uiState: UiState, onAction: (UiAction) -> Unit) {
             label = stringResource(R.string.password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
-            passwordVisibility = uiState.passwordVisibility,
-            onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityClick) }
+
         )
         Spacer(modifier = Modifier.height(8.dp))
 

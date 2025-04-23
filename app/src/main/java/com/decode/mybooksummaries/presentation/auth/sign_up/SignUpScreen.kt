@@ -143,8 +143,6 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
             label = stringResource(R.string.password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
-            passwordVisibility = uiState.passwordVisible1,
-            onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisible1Click) }
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -154,8 +152,6 @@ fun SignUpFields(uiState: UiState, onAction: (UiAction) -> Unit) {
             label = stringResource(R.string.repeat_password),
             isPassword = true,
             icon = Icons.Outlined.Lock,
-            passwordVisibility = uiState.passwordVisible2,
-            onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisible2Click) }
         )
     }
 }

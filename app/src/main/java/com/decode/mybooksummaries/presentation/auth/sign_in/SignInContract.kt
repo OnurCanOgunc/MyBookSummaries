@@ -6,7 +6,6 @@ object SignInContract {
         val password: String = "",
         val dialogVisible: Boolean = false,
         val isLoading: Boolean = false,
-        val passwordVisibility: Boolean = false,
         val message: String = ""
     )
     sealed interface UiAction {
@@ -17,7 +16,6 @@ object SignInContract {
         data object OnSignUpClick : UiAction
         data object OnResetPasswordClick : UiAction
         data object OnSendRestPasswordEmailClick : UiAction
-        data object OnPasswordVisibilityClick : UiAction
         data object OnMessageShown : UiAction
         data object OnBackClick : UiAction
     }

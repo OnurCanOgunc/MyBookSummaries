@@ -48,16 +48,6 @@ class SignUpViewModel @Inject constructor(
                 UiAction.OnBackClick -> emitUiEffect(UiEffect.NavigateBack)
                 UiAction.OnLoginClick -> emitUiEffect(UiEffect.NavigateSignIn)
                 UiAction.OnMessageShown -> updateUiState { copy(message = "") }
-                UiAction.OnPasswordVisible1Click -> updateUiState {
-                    copy(
-                        passwordVisible1 = !passwordVisible1
-                    )
-                }
-                UiAction.OnPasswordVisible2Click -> updateUiState {
-                    copy(
-                        passwordVisible2 = !passwordVisible2
-                    )
-                }
             }
         }
     }

@@ -35,11 +35,6 @@ class SignInViewModel @Inject constructor(
                UiAction.OnBackClick -> emitUiEffect(UiEffect.NavigateBack)
                UiAction.OnDialogDismiss -> updateUiState { copy(dialogVisible = false) }
                UiAction.OnResetPasswordClick -> updateUiState { copy(dialogVisible = true) }
-               UiAction.OnPasswordVisibilityClick -> updateUiState {
-                    copy(
-                        passwordVisibility = !passwordVisibility
-                    )
-                }
             }
         }
     }
