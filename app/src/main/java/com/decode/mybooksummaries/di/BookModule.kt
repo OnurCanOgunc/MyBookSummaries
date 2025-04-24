@@ -1,7 +1,5 @@
 package com.decode.mybooksummaries.di
 
-import com.decode.mybooksummaries.data.repository.BookRepositoryImpl
-import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.domain.repository.BookRepository
 import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.domain.usecase.book.AddBookUseCase
@@ -12,8 +10,6 @@ import com.decode.mybooksummaries.domain.usecase.book.GetBooksReadThisMonthUseCa
 import com.decode.mybooksummaries.domain.usecase.book.GetBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetSearchBooksUseCase
 import com.decode.mybooksummaries.domain.usecase.book.GetTotalBooksReadUseCase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,16 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object BookModule {
-    @Provides
-    @Singleton
-    fun provideBookRepository(
-        db: BookDatabase,
-        firestore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth,
-    ): BookRepository = BookRepositoryImpl(
-        firestore = firestore,
-        auth = firebaseAuth,
-        db = db)
 
     @Provides
     @Singleton

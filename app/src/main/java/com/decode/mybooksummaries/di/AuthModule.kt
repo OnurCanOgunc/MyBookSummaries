@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.di
 
-import com.decode.mybooksummaries.data.repository.AuthRepositoryImpl
 import com.decode.mybooksummaries.domain.repository.AuthRepository
 import com.decode.mybooksummaries.domain.usecase.AuthUseCases
 import com.decode.mybooksummaries.domain.usecase.auth.CreateAccountUseCase
@@ -20,11 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
-
-    @Provides
-    @Singleton
-    fun provideAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository = authRepositoryImpl
-
 
     @Provides
     @Singleton

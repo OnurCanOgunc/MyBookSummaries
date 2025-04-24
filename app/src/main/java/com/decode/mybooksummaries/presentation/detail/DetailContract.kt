@@ -2,12 +2,14 @@ package com.decode.mybooksummaries.presentation.detail
 
 import com.decode.mybooksummaries.domain.model.Book
 import com.decode.mybooksummaries.domain.model.Quote
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 object DetailContract {
     data class UiState(
         val book: Book = Book(),
         val quoteModel: Quote = Quote(),
-        val quotes: List<Quote> = emptyList(),
+        val quotes: ImmutableList<Quote> = persistentListOf(),
         val quote: String = "",
         val bookStartDate: String = "",
         val bookFinishDate: String = "",

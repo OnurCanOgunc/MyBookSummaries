@@ -1,6 +1,5 @@
 package com.decode.mybooksummaries.presentation.addbook
 
-import android.graphics.Bitmap
 import com.decode.mybooksummaries.domain.model.Book
 
 object AddBookContract {
@@ -8,7 +7,6 @@ object AddBookContract {
         val isLoading: Boolean = false,
         val message: String? = null,
         val book: Book = Book(),
-        val imageUri: Bitmap? = null,
         val datePickerType: DatePickerType? = null
     )
     sealed interface UiAction {
@@ -23,7 +21,6 @@ object AddBookContract {
         data class OnFinishedReadingDateChange(val publicationDate: Long?) : UiAction
         data class OnImageUriChange(val imageUri: String) : UiAction
         data class OnDatePickerTypeChange(val datePickerType: DatePickerType?) : UiAction
-        data class OnImageSelected(val imageUri: Bitmap?) : UiAction
         data object OnAddBookClick : UiAction
         data object OnCancelClick : UiAction
         data object OnBackClick : UiAction
