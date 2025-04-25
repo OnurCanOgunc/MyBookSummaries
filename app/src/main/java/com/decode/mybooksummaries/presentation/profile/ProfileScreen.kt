@@ -165,12 +165,6 @@ fun ProfileStatistics(
         Spacer(modifier = Modifier.height(5.dp))
         ProgressCard(booksRead = booksRead, monthlyGoal = monthlyGoal)
         Spacer(modifier = Modifier.height(5.dp))
-        AchievementIcons(
-            icons = immutableListOf(
-                Icons.Default.EmojiEvents,
-                Icons.AutoMirrored.Default.MenuBook,
-                Icons.Default.Star
-            )
-        )
+        AchievementIcons()
     }
 }
