@@ -6,7 +6,6 @@ import com.decode.mybooksummaries.core.network.ConnectivityObserver
 import com.decode.mybooksummaries.domain.model.Book
 import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.presentation.addbook.AddBookContract.UiEffect
-import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
 import com.decode.mybooksummaries.core.ui.viewmodel.BaseViewModel
 import com.decode.mybooksummaries.core.utils.Response
 import com.decode.mybooksummaries.presentation.addbook.AddBookContract.UiAction

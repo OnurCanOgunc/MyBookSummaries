@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +28,6 @@ import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
 import com.decode.mybooksummaries.presentation.profile.component.ProfileImage
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
-import okhttp3.internal.immutableListOf
 
 @Composable
 fun ProfileScreen(

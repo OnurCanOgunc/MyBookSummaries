@@ -43,7 +43,6 @@ import com.decode.mybooksummaries.core.ui.components.TopBar
 import com.decode.mybooksummaries.core.ui.extensions.CollectWithLifecycle
 import com.decode.mybooksummaries.core.ui.extensions.timestampToString
 import com.decode.mybooksummaries.presentation.addbook.utils.uriToBase64
-import com.decode.mybooksummaries.presentation.addbook.utils.uriToBitmap
 import kotlinx.coroutines.flow.Flow
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
