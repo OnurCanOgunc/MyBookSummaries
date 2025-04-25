@@ -38,7 +38,6 @@ class AddBookViewModel @Inject constructor(
                 is UiAction.OnStartedReadingDateChange -> updateStartedReadingDate(uiAction.publicationDate)
                 is UiAction.OnFinishedReadingDateChange -> updateFinishedReadingDate(uiAction.publicationDate)
                 is UiAction.OnImageUriChange -> updateBook { copy(imageUrl = uiAction.imageUri) }
-                is UiAction.OnImageSelected -> updateUiState { copy(imageUri = uiAction.imageUri) }
                 is UiAction.OnDatePickerTypeChange -> updateUiState { copy(datePickerType = uiAction.datePickerType) }
                 is UiAction.LoadBook -> getBookById(uiAction.bookId)
             }
@@ -82,7 +81,6 @@ class AddBookViewModel @Inject constructor(
                         updateUiState {
                             copy(
                                 book = result.data,
-                                imageUri = result.data.imageUrl.base64ToBitmap(),
                                 isLoading = false,
                                 message = "Book fetched successfully!"
                             )

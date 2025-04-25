@@ -91,10 +91,8 @@ fun AddBookScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CoverImageUpload(
-                    imageUri = uiState.imageUri,
+                    imageUrl = uiState.book.imageUrl,
                     onImageSelected = { uri ->
-                        val bitmap = uriToBitmap(context, uri)
-                        onAction(UiAction.OnImageSelected(bitmap))
                         val base64Image = uriToBase64(context, uri)
                         base64Image?.let {
                             onAction(UiAction.OnImageUriChange(it.toString()))

@@ -4,13 +4,15 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -20,25 +22,26 @@ import com.decode.mybooksummaries.R
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 
 @Composable
 fun CoverImageUpload(
-    imageUri: Bitmap?,
+    imageUrl: String,
     onImageSelected: (Uri) -> Unit
 ) {
-    val painter = if (imageUri != null) {
-        BitmapPainter(image = imageUri.asImageBitmap())
-    } else {
-        painterResource(id = R.drawable.img)
+    val imageBitmap: Bitmap? by remember(imageUrl) {
+        derivedStateOf { imageUrl.base64ToBitmap() }
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {uri: Uri?->
         uri?.let { onImageSelected(it) }
     }
 
-    Image(
-        painter = painter,
+    AsyncImage(
+        model = imageBitmap ?: R.drawable.img,
         contentDescription = stringResource(R.string.book_cover),
         modifier = Modifier
             .height(180.dp)
