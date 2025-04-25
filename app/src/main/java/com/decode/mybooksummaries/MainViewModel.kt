@@ -6,10 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.decode.mybooksummaries.core.network.ConnectivityObserver
 import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.worker.SyncWorkManager
+import com.decode.mybooksummaries.di.IoDispatcher
 import com.decode.mybooksummaries.domain.usecase.auth.CurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,8 +20,10 @@ class MainViewModel @Inject constructor(
     currentUser: CurrentUserUseCase,
     private val syncWorkManager: SyncWorkManager,
     private val connectivityObserver: ConnectivityObserver,
-    private val db: BookDatabase
+    private val db: BookDatabase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
+
     val authUser = currentUser.getCurrentUser() == null
 
     init {
@@ -29,11 +34,16 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             connectivityObserver.isConnected.collectLatest { isConnected ->
                 if (isConnected) {
-                    val unsyncedBooks = db.bookDao().getUnsyncedBooks().isNotEmpty()
-                    val deletedUnsyncedBooks = db.bookDao().getDeletedUnsyncedBooks().isNotEmpty()
-                    val monthlyGoals = db.monthlyGoalDao().getUnsyncedGoals().isNotEmpty()
-                    Log.d("SyncViewModel", "$deletedUnsyncedBooks")
-                    if (unsyncedBooks || deletedUnsyncedBooks || monthlyGoals) {
+                    val shouldSync = withContext(ioDispatcher) {
+                        val unsyncedBooks = db.bookDao().getUnsyncedBooks().isNotEmpty()
+                        val deletedUnsyncedBooks = db.bookDao().getDeletedUnsyncedBooks().isNotEmpty()
+                        val monthlyGoals = db.monthlyGoalDao().getUnsyncedGoals().isNotEmpty()
+                        val unsyncedQuotes = db.quoteDao().getUnsyncedQuotes().isNotEmpty()
+                        val deletedUnsyncedQuotes = db.quoteDao().getDeletedUnsyncedQuotes().isNotEmpty()
+                        unsyncedBooks || deletedUnsyncedBooks || monthlyGoals || unsyncedQuotes || deletedUnsyncedQuotes
+                    }
+
+                    if (shouldSync) {
                         Log.d("SyncViewModel", "Internet is here, synchronization is starting")
                         syncWorkManager.startOneTimeSync()
                     } else {
@@ -43,5 +53,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
 
 }

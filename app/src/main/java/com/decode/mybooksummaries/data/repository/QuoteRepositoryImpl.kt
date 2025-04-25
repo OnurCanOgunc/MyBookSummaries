@@ -3,17 +3,19 @@ package com.decode.mybooksummaries.data.repository
 import android.util.Log
 import com.decode.mybooksummaries.core.utils.Response
 import com.decode.mybooksummaries.data.local.db.BookDatabase
+import com.decode.mybooksummaries.data.mapper.toQuote
 import com.decode.mybooksummaries.data.mapper.toQuoteEntity
+import com.decode.mybooksummaries.di.IoDispatcher
 import com.decode.mybooksummaries.domain.model.Quote
 import com.decode.mybooksummaries.domain.repository.QuoteRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class QuoteRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val db: BookDatabase
+    private val db: BookDatabase,
+    @IoDispatcher private val ioScope: CoroutineScope
 ) : QuoteRepository {
 
     private val quotesRef: CollectionReference
@@ -32,14 +35,15 @@ class QuoteRepositoryImpl @Inject constructor(
         quote: Quote,
         isConnected: Boolean
     ): Response<Quote> {
-        return try {
-            if (isConnected) {
-                db.quoteDao().insertQuote(quote.toQuoteEntity())
-                quotesRef.document(quote.id).set(quote.copy(userId = auth.currentUser?.uid)).await()
-                Response.Success(quote)
-            } else Response.Failure("No internet connection")
-        } catch (_: Exception) {
-            Response.Failure("An error occurred while adding a book")
+        return runCatching {
+            val quoteEntity = quote.toQuoteEntity().copy(isSynced = isConnected)
+            db.quoteDao().insertQuote(quoteEntity)
+            if (isConnected) quotesRef.document(quote.id)
+                .set(quote.copy(userId = auth.currentUser?.uid)).await()
+            Response.Success(quote)
+
+        }.getOrElse {
+            Response.Failure("An error occurred while adding a quote")
         }
     }
 
@@ -52,6 +56,7 @@ class QuoteRepositoryImpl @Inject constructor(
 
         if (isConnected) {
             val listener = quotesRef
+                .whereEqualTo("bookId", bookId)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(Response.Failure(error.message ?: "Error fetching quotes"))
@@ -62,7 +67,7 @@ class QuoteRepositoryImpl @Inject constructor(
                         ?.mapNotNull { it.toObject(Quote::class.java) }
                         .orEmpty()
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                    ioScope.launch {
                         db.quoteDao().insertQuotes(firestoreQuotes.map { it.toQuoteEntity() })
                     }
 
@@ -75,7 +80,8 @@ class QuoteRepositoryImpl @Inject constructor(
 
             awaitClose { listener.remove() }
         } else {
-            trySend(Response.Failure("No internet connection"))
+            val localQuotes = db.quoteDao().getQuotes(bookId).first().map { it.toQuote() }
+            trySend(if (localQuotes.isEmpty()) Response.Empty else Response.Success(localQuotes))
             awaitClose()
         }
     }
@@ -85,16 +91,16 @@ class QuoteRepositoryImpl @Inject constructor(
         quote: Quote,
         isConnected: Boolean
     ): Response<String> {
-        return try {
+        return runCatching {
             if (isConnected) {
                 db.quoteDao().deleteQuote(quote.id)
-                val quotesSnapshot =
-                    quotesRef.whereEqualTo("quote", quote.quote).limit(1).get().await()
-                quotesSnapshot.documents.firstOrNull()?.reference?.delete()?.await()
-                Response.Success("Book deleted successfully")
-            } else Response.Failure("No internet connection")
-        } catch (e: Exception) {
-            Response.Failure(e.message ?: "Error deleting book")
+                quotesRef.document(quote.id).delete().await()
+                Log.d("firestore", "Deleting quote with id: ${quote.id}")
+                Response.Success("Quote deleted successfully")
+            } else db.quoteDao().markQuoteAsDeleted(quote.id)
+            Response.Success("The deletion request has been recorded and will be completed once the internet connection is restored.")
+        }.getOrElse {
+            Response.Failure(it.message ?: "Error deleting book")
         }
     }
 

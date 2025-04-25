@@ -10,3 +10,11 @@ fun Quote.toQuoteEntity(): QuoteEntity {
         quote = quote,
     )
 }
+
+fun QuoteEntity.toQuote(): Quote {
+    return Quote(
+        id = id,
+        bookId = bookId,
+        quote = quote,
+    )
+}

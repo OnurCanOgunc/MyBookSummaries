@@ -4,13 +4,13 @@ import com.decode.mybooksummaries.core.utils.Response
 import com.decode.mybooksummaries.data.local.db.BookDatabase
 import com.decode.mybooksummaries.data.mapper.toEntity
 import com.decode.mybooksummaries.data.mapper.toMonthlyGoal
+import com.decode.mybooksummaries.di.IoDispatcher
 import com.decode.mybooksummaries.domain.model.MonthlyGoal
 import com.decode.mybooksummaries.domain.repository.MonthlyGoalRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,7 +23,8 @@ import javax.inject.Inject
 class MonthlyGoalRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val db: BookDatabase
+    private val db: BookDatabase,
+    @IoDispatcher private val ioScope: CoroutineScope
 ) : MonthlyGoalRepository {
 
     private val monthlyGoalsRef: CollectionReference
@@ -74,7 +75,7 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
 
                     val goal = snapshot?.documents?.firstOrNull()?.toObject(MonthlyGoal::class.java)
                     goal?.let {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        ioScope.launch {
                             db.monthlyGoalDao().insertMonthlyGoal(it.toEntity().copy(isSynced = true))
                         }
                         trySend(Response.Success(it))
