@@ -13,6 +13,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -31,8 +35,6 @@ fun CustomOutlinedTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     isPassword: Boolean = false,
     icon: ImageVector? = null,
-    passwordVisibility: Boolean = false,
-    onPasswordVisibilityToggle: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = CustomTheme.colors.charcoalBlack,
@@ -46,6 +48,9 @@ fun CustomOutlinedTextField(
         unfocusedTrailingIconColor = CustomTheme.colors.coolGray,
     )
 ) {
+    var passwordVisibility by remember {
+        mutableStateOf(true)
+    }
     OutlinedTextField(
         value = value,
         maxLines = 1,
@@ -54,7 +59,7 @@ fun CustomOutlinedTextField(
         shape = RoundedCornerShape(10.dp),
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        visualTransformation = if (isPassword && !passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
         leadingIcon = icon?.let {
             {
                 Icon(
@@ -66,7 +71,7 @@ fun CustomOutlinedTextField(
         },
         trailingIcon = if (isPassword) {
             {
-                IconButton(onClick = { onPasswordVisibilityToggle?.invoke() }) {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
                     Icon(
                         imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = stringResource(R.string.toggle_password_visibility),

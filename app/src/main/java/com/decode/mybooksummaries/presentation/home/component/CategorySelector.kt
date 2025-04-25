@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decode.mybooksummaries.R
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
-
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CategorySelector(
@@ -26,7 +26,7 @@ fun CategorySelector(
     onCategorySelected: (String) -> Unit
 ) {
     val items = remember {
-        listOf(
+        persistentListOf(
             "All",
             "Fiction",
             "Romance",
