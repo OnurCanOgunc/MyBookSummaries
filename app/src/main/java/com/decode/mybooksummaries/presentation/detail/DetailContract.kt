@@ -34,6 +34,7 @@ object DetailContract {
     sealed interface UiEffect {
         data object NavigateBack : UiEffect
         data object NavigateToEdit : UiEffect
+        data class ShowSnackbar(val message: String) : UiEffect
     }
 
 }

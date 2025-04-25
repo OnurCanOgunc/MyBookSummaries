@@ -11,6 +11,8 @@ import com.decode.mybooksummaries.domain.usecase.BookUseCases
 import com.decode.mybooksummaries.domain.usecase.QuoteUseCases
 import com.decode.mybooksummaries.presentation.detail.DetailContract.UiEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -68,10 +70,11 @@ class DetailViewModel @Inject constructor(
 
                     is Response.Failure -> {
                         updateUiState { copy(error = result.message, isLoading = false) }
+                        emitUiEffect(UiEffect.ShowSnackbar(result.message))
                     }
 
                     Response.Empty -> {
-                        updateUiState { copy(error = "Quote not found", isLoading = false) }
+                        updateUiState { copy(isLoading = false) }
                     }
                 }
             }
@@ -98,9 +101,11 @@ class DetailViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             quote = "",
-                            quoteModel = Quote()
+                            quoteModel = Quote(),
                         )
                     }
+                    getQuotes(uiState.value.book.id)
+                    emitUiEffect(UiEffect.ShowSnackbar("Quote added successfully"))
                 }
 
                 is Response.Failure -> {
@@ -112,6 +117,7 @@ class DetailViewModel @Inject constructor(
                             quoteModel = Quote()
                         )
                     }
+                    emitUiEffect(UiEffect.ShowSnackbar(result.message))
                 }
 
                 Response.Empty -> {
@@ -136,7 +142,7 @@ class DetailViewModel @Inject constructor(
                     when (result) {
                         is Response.Success -> {
                             Log.d("DetailViewModel", "getQuotes: ${result.data}")
-                            updateUiState { copy(isLoading = false, quotes = result.data) }
+                            updateUiState { copy(isLoading = false, quotes = result.data.toImmutableList()) }
                         }
 
                         is Response.Failure -> {
@@ -145,7 +151,7 @@ class DetailViewModel @Inject constructor(
                         }
 
                         Response.Empty -> {
-                            updateUiState { copy(isLoading = false, quotes = emptyList()) }
+                            updateUiState { copy(isLoading = false, quotes = persistentListOf()) }
                         }
                     }
                 }
@@ -159,10 +165,12 @@ class DetailViewModel @Inject constructor(
             when (val result = quoteUseCase.deleteQuote(quote, isConnected.value)) {
                 is Response.Success -> {
                     updateUiState { copy(isLoading = false) }
+                    emitUiEffect(UiEffect.ShowSnackbar("Quote deleted successfully"))
                 }
 
                 is Response.Failure -> {
                     updateUiState { copy(isLoading = false, error = result.message) }
+                    emitUiEffect(UiEffect.ShowSnackbar(result.message))
                 }
 
                 Response.Empty -> {

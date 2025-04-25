@@ -4,8 +4,11 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +28,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +40,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
@@ -46,6 +54,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -72,6 +81,8 @@ import com.decode.mybooksummaries.presentation.detail.component.MinimalDropdownM
 import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 import com.decode.mybooksummaries.presentation.detail.util.splitTextByWords
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
@@ -84,10 +95,11 @@ fun DetailScreen(
     popBackStack: () -> Unit,
     onAddBookClick: (String) -> Unit
 ) {
-    val imageBitmap by produceState<Bitmap?>(initialValue = null, key1 = uiState.book.imageUrl) {
-        value = uiState.book.imageUrl.base64ToBitmap()
-    }
+
     var showDialog by remember { mutableStateOf(false) }
+    var isMessageVisible by remember { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         onAction(DetailContract.UiAction.LoadBook(bookId))
@@ -96,7 +108,10 @@ fun DetailScreen(
 
     LaunchedEffect(uiState.error) {
         if (uiState.error.isNotEmpty()) {
+            isMessageVisible = true
             delay(3000)
+            isMessageVisible = false
+            delay(600)
             onAction(DetailContract.UiAction.OnMessageShown)
         }
     }
@@ -110,79 +125,108 @@ fun DetailScreen(
             DetailContract.UiEffect.NavigateToEdit -> {
                 onAddBookClick(bookId)
             }
+
+            is DetailContract.UiEffect.ShowSnackbar -> {
+                snackbarHostState.showSnackbar(it.message)
+            }
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-    ) {
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { snackbarData ->
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    action = {
+                        IconButton(onClick = { snackbarData.dismiss() }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close Snackbar",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                ) {
+                    Text(text = snackbarData.visuals.message)
+                }
+            }
+        },
+        containerColor = CustomTheme.colors.backgroundColor
+    ) { _ ->
 
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         ) {
-            IconButton(
-                onClick = {
-                    onAction(DetailContract.UiAction.OnBackClick)
-                },
-                modifier = Modifier,
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = null,
-                    tint = CustomTheme.colors.textBlack
+                IconButton(
+                    onClick = {
+                        onAction(DetailContract.UiAction.OnBackClick)
+                    },
+                    modifier = Modifier,
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = null,
+                        tint = CustomTheme.colors.textBlack
+                    )
+                }
+                MinimalDropdownMenu(
+                    expanded = uiState.expanded,
+                    onDismissRequest = { onAction(DetailContract.UiAction.OnDismissRequest) },
+                    onMoveCartClick = { onAction(DetailContract.UiAction.OnMoveCartClick) },
+                    onEditClick = { onAction(DetailContract.UiAction.OnEditClick(bookId)) },
+                    onDeleteClick = { onAction(DetailContract.UiAction.OnDeleteClick(bookId)) }
                 )
             }
-            MinimalDropdownMenu(
-                expanded = uiState.expanded,
-                onDismissRequest = { onAction(DetailContract.UiAction.OnDismissRequest) },
-                onMoveCartClick = { onAction(DetailContract.UiAction.OnMoveCartClick) },
-                onEditClick = { onAction(DetailContract.UiAction.OnEditClick(bookId)) },
-                onDeleteClick = { onAction(DetailContract.UiAction.OnDeleteClick(bookId)) }
+
+            Header(
+                imageUrl = uiState.book.imageUrl,
+                title = uiState.book.title,
+                author = uiState.book.author,
+                genre = uiState.book.genre,
+                startedDate = uiState.bookStartDate,
+                finishedDate = uiState.bookFinishDate,
+                currentPage = uiState.book.currentPage,
+                pageCount = uiState.book.pageCount
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            BookSummary(
+                summary = uiState.book.summary,
+                showFullSummary = showDialog,
+                onReadMoreClick = {
+                    showDialog = it
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            FavoriteQuotes(
+                quote = uiState.quote,
+                errorMessage = uiState.error,
+                isMessageVisible = isMessageVisible,
+                onQuoteChange = { onAction(DetailContract.UiAction.QuoteChange(it)) },
+                quotes = uiState.quotes,
+                onQuoteDelete = { onAction(DetailContract.UiAction.DeleteQuote(it)) },
+                onQuoteAdd = {
+                    Log.d("FavoriteQuotes", "Adding quote: ${uiState.quote}")
+                    onAction(DetailContract.UiAction.AddQuote(uiState.quote))
+                }
             )
         }
-
-        Header(
-            imageBitmap = imageBitmap,
-            title = uiState.book.title,
-            author = uiState.book.author,
-            genre = uiState.book.genre,
-            startedDate = uiState.bookStartDate,
-            finishedDate = uiState.bookFinishDate,
-            currentPage = uiState.book.currentPage,
-            pageCount = uiState.book.pageCount
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        BookSummary(
-            summary = uiState.book.summary,
-            showFullSummary = showDialog,
-            onReadMoreClick = {
-                showDialog = it
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        FavoriteQuotes(
-            quote = uiState.quote,
-            errorMessage = uiState.error,
-            onQuoteChange = { onAction(DetailContract.UiAction.QuoteChange(it)) },
-            quotes = uiState.quotes,
-            onQuoteDelete = { onAction(DetailContract.UiAction.DeleteQuote(it)) },
-            onQuoteAdd = {
-                Log.d("FavoriteQuotes", "Adding quote: ${uiState.quote}")
-                onAction(DetailContract.UiAction.AddQuote(uiState.quote))
-            }
-        )
     }
 }
 
 @Composable
 fun Header(
-    imageBitmap: Bitmap?,
+    imageUrl: String,
     title: String,
     author: String,
     genre: String,
@@ -191,6 +235,10 @@ fun Header(
     currentPage: String,
     pageCount: String,
 ) {
+
+    val imageBitmap: Bitmap? by remember(imageUrl) {
+        derivedStateOf { imageUrl.base64ToBitmap() }
+    }
 
     Row(
         modifier = Modifier
@@ -396,9 +444,10 @@ fun SummaryPager(summary: String, onDismiss: () -> Unit) {
 fun FavoriteQuotes(
     modifier: Modifier = Modifier,
     quote: String,
+    isMessageVisible: Boolean,
     errorMessage: String = "",
     onQuoteChange: (String) -> Unit,
-    quotes: List<Quote>,
+    quotes: ImmutableList<Quote>,
     onQuoteDelete: (Quote) -> Unit,
     onQuoteAdd: () -> Unit,
 ) {
@@ -455,14 +504,24 @@ fun FavoriteQuotes(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        if (errorMessage.isNotEmpty()) {
+        AnimatedVisibility(
+            visible = isMessageVisible,
+            enter = slideInVertically(
+                initialOffsetY = { fullHeight -> fullHeight }
+            ) + fadeIn(),
+            exit = slideOutVertically(
+                targetOffsetY = { fullHeight -> fullHeight }
+            ) + fadeOut()
+        ) {
             Text(
                 text = errorMessage,
                 color = CustomTheme.colors.errorColor,
-                style = CustomTheme.typography.titleSmall,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 8.dp),
+                style = CustomTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+
             )
         }
 
@@ -472,7 +531,7 @@ fun FavoriteQuotes(
             items(quotes, key = { it.id }) { quote ->
                 SwipeToDeleteContainer(
                     item = quote,
-                    onDelete = onQuoteDelete
+                    onDelete = onQuoteDelete,
                 )
             }
         }
