@@ -28,7 +28,6 @@ BookNest is a mobile application designed to help users organize their books, sa
 *   **Coroutines - Flow:** Asynchronous programming and data streams.
 *   **SplashScreen API:** Displays a splash screen on startup.
 *   **Coil:** Efficient image loading.
-*   **MVVM:** Separates concerns between UI, business logic, and data layers.
 *   **Clean Architecture:** Ensures modular, scalable, and maintainable code structure.
 
 ## Screens:  
