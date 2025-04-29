@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.decode.mybooksummaries.data.local.entity.MonthlyGoalEntity
+import com.decode.mybooksummaries.domain.model.MonthlyGoal
 
 @Dao
 interface MonthlyGoalDao {
@@ -19,6 +20,9 @@ interface MonthlyGoalDao {
 
     @Query("SELECT * FROM monthly_goals WHERE isSynced = 0")
     suspend fun getUnsyncedGoals(): List<MonthlyGoalEntity>
+
+    @Query("SELECT * FROM monthly_goals WHERE month = :month AND year = :year AND userId = :userId LIMIT 1")
+    suspend fun getGoalByMonth(userId: String, month: Int, year: Int): MonthlyGoal?
 
     @Query("DELETE FROM monthly_goals")
     suspend fun deleteAllMonthlyGoals()

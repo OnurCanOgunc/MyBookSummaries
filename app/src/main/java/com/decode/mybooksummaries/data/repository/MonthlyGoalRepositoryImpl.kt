@@ -48,7 +48,10 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
                 monthlyGoalsRef.document(month).set(monthlyGoal).await()
                 db.monthlyGoalDao().insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = true))
             } else {
-                db.monthlyGoalDao().insertMonthlyGoal(monthlyGoal.toEntity().copy(isSynced = false))
+                db.monthlyGoalDao().insertMonthlyGoal(
+                    monthlyGoal.toEntity()
+                        .copy(isSynced = false, userId = auth.currentUser?.uid ?: "", createdAt = System.currentTimeMillis())
+                )
             }
             Response.Success(Unit)
         } catch (e: Exception) {
@@ -76,7 +79,8 @@ class MonthlyGoalRepositoryImpl @Inject constructor(
                     val goal = snapshot?.documents?.firstOrNull()?.toObject(MonthlyGoal::class.java)
                     goal?.let {
                         ioScope.launch {
-                            db.monthlyGoalDao().insertMonthlyGoal(it.toEntity().copy(isSynced = true))
+                            db.monthlyGoalDao()
+                                .insertMonthlyGoal(it.toEntity().copy(isSynced = true))
                         }
                         trySend(Response.Success(it))
                     } ?: trySend(Response.Empty)

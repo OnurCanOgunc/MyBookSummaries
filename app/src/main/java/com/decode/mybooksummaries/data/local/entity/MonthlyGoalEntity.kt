@@ -8,7 +8,10 @@ import java.util.UUID
 data class MonthlyGoalEntity(
     @PrimaryKey
     val id: String = UUID.randomUUID().toString(),
+    val userId: String,
     val month: String,
     val goalCount: Int,
-    val isSynced: Boolean = false
+    val isSynced: Boolean = false,
+    val year: Int,
+    val createdAt: Long
 )
