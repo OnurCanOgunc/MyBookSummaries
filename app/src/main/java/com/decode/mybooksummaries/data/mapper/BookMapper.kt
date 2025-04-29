@@ -8,6 +8,7 @@ import java.util.Date
 fun Book.toBookEntity(): BookEntity {
     return BookEntity(
         id = id,
+        userId = userId,
         title = title,
         author = author,
         pageCount = pageCount,
@@ -18,12 +19,14 @@ fun Book.toBookEntity(): BookEntity {
         finishedReadingDate = finishedReadingDate?.seconds,
         summary = summary,
         imageUrl = imageUrl,
+        lastUpdated = System.currentTimeMillis()
     )
 }
 
 fun BookEntity.toBook(): Book {
     return Book(
         id = id,
+        userId = userId,
         title = title,
         author = author,
         pageCount = pageCount,

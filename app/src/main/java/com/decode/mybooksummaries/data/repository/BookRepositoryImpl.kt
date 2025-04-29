@@ -37,7 +37,7 @@ class BookRepositoryImpl @Inject constructor(
             val bookEntity = book.toBookEntity().copy(isSynced = isConnected)
             db.bookDao().insertBook(bookEntity)
             if (isConnected) booksRef.document(book.id)
-                .set(book.copy(userId = auth.currentUser?.uid)).await()
+                .set(book.copy(userId = auth.currentUser?.uid ?: "")).await()
             Response.Success(book)
         }.getOrElse { e ->
             Log.d("BookRepositoryImpl", "addBook: ${e.message}")
