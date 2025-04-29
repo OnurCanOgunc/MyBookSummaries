@@ -15,6 +15,7 @@ import java.util.UUID
 data class BookEntity(
     @PrimaryKey
     val id: String = UUID.randomUUID().toString(),
+    val userId: String = "",
     val title: String = "",
     val author: String = "",
     val pageCount: String = "0",
@@ -26,5 +27,6 @@ data class BookEntity(
     val summary: String = "",
     val imageUrl: String = "",
     val isSynced: Boolean = false,
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val lastUpdated: Long? = null,
 )

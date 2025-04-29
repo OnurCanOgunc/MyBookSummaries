@@ -19,6 +19,12 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%' OR author LIKE '%' || :query || '%' COLLATE NOCASE")
     fun searchBooks(query: String):  Flow<List<BookEntity>>
 
+    @Query("SELECT * FROM books WHERE userId = :userId AND readingStatus = 'Reading' AND lastUpdated < :thresholdTimeMillis AND isDeleted = 0")
+    suspend fun getReadingBooksInactiveSince(userId: String, thresholdTimeMillis: Long): List<BookEntity>
+
+    @Query("SELECT * FROM books WHERE readingStatus = :status")
+    suspend fun getBooksByStatus(status: String): List<BookEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBooks(books: List<BookEntity>)
 
