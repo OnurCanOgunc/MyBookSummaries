@@ -14,6 +14,8 @@ BookNest is designed to help users organize their books, save summaries, track r
 *   **Offline Support:** Access and add books without an internet connection.
 *   **Total Books Read:** Displays the total number of books read.
 *   **Profile Management:** Update user information.
+*   **Share Summaries as PDF:** Export and share your summaries in PDF format.
+*   **Reading Reminders:** Sends notifications if the user hasn’t updated their reading progress for 3 days or hasn’t set a monthly goal. Users are redirected to the relevant screen through deep links.
 *   **Light & Dark Mode Support** 
 
 ## Tech Stack
