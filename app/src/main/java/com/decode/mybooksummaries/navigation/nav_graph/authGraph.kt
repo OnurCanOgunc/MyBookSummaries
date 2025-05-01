@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.presentation.navigation.nav_graph
+package com.decode.mybooksummaries.navigation.nav_graph
 
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,7 +13,7 @@ import com.decode.mybooksummaries.presentation.auth.sign_up.SignUpScreen
 import com.decode.mybooksummaries.presentation.auth.sign_up.SignUpViewModel
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeScreen
 import com.decode.mybooksummaries.presentation.auth.welcome.WelcomeViewModel
-import com.decode.mybooksummaries.presentation.navigation.Screens
+import com.decode.mybooksummaries.navigation.Screens
 
 fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<Screens.Auth>(startDestination = Screens.Auth.Welcome) {

@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.presentation.navigation
+package com.decode.mybooksummaries.navigation
 
 import kotlinx.serialization.Serializable
 
