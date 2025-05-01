@@ -2,7 +2,7 @@ package com.decode.mybooksummaries.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.decode.mybooksummaries.data.worker.SyncWorkManager
+import com.decode.mybooksummaries.data.worker.WorkScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +20,7 @@ object WorkerModule {
 
     @Provides
     @Singleton
-    fun provideSyncWorkManager(workManager: WorkManager): SyncWorkManager {
-        return SyncWorkManager(workManager)
+    fun provideSyncWorkManager(workManager: WorkManager): WorkScheduler {
+        return WorkScheduler(workManager)
     }
 }

@@ -1,4 +1,4 @@
-package com.decode.mybooksummaries.presentation.detail.util
+package com.decode.mybooksummaries.presentation.detail.utils
 
 fun splitTextByWords(summary: String, chunkSize: Int): List<String> {
     val words = summary.trim().split("\\s+".toRegex())

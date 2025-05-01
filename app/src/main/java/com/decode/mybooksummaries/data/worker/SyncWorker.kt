@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 
+
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
@@ -31,6 +32,8 @@ class SyncWorker @AssistedInject constructor(
     private val quoteRepository: QuoteRepository,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : CoroutineWorker(context, workerParams) {
+
+    //private val limitedIO = ioDispatcher.limitedParallelism(6)
 
     override suspend fun doWork(): Result {
         Log.d("SyncWorker", "doWork() called - Synchronization begins")
@@ -130,4 +133,5 @@ class SyncWorker @AssistedInject constructor(
             Result.retry()
         }
     }
+
 }

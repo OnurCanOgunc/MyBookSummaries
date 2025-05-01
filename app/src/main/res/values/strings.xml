@@ -82,4 +82,6 @@
     <string name="select_from_gallery">select from gallery</string>
     <string name="empty_book">You don\'t have any books added yet</string>
     <string name="selected">Selected</string>
+    <string name="share">Share Summary</string>
+    <string name="delete_book">Delete Book</string>
 </resources>

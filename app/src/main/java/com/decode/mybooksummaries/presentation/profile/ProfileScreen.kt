@@ -2,6 +2,7 @@ package com.decode.mybooksummaries.presentation.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,15 +58,18 @@ fun ProfileScreen(
 
     Scaffold(
         topBar = {
-            IconButton(
-                onClick = { onBackClick() },
-                modifier = Modifier.padding(top = 16.dp, start = 16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.back),
-                    tint = CustomTheme.colors.textBlack
-                )
+            Row(modifier = Modifier.fillMaxWidth()) {
+                IconButton(
+                    onClick = { onBackClick() },
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        tint = CustomTheme.colors.textBlack
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
             }
         },
         bottomBar = {

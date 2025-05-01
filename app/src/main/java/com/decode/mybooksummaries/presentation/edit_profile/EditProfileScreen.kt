@@ -80,8 +80,6 @@ private fun PasswordChange(
         onValueChange = { onAction(UiAction.OnCurrentPasswordChange(it)) },
         label = stringResource(R.string.current_password),
         isPassword = true,
-        passwordVisibility = uiState.passwordVisibilityCurrent,
-        onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityCurrentClick) },
         icon = Icons.Default.Lock,
 
         )
@@ -91,8 +89,6 @@ private fun PasswordChange(
         onValueChange = { onAction(UiAction.OnNewPasswordChange(it)) },
         label = stringResource(R.string.new_password),
         isPassword = true,
-        passwordVisibility = uiState.passwordVisibilityNew,
-        onPasswordVisibilityToggle = { onAction(UiAction.OnPasswordVisibilityNewClick) },
         icon = Icons.Default.Lock,
     )
 }

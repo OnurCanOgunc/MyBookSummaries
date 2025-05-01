@@ -43,7 +43,7 @@ fun MinimalDropdownMenu(
             DropdownMenuItem(
                 text = {
                     Text(
-                        "Edit",
+                        stringResource(R.string.edit),
                         style = CustomTheme.typography.bodyLarge,
                         color = CustomTheme.colors.charcoalBlack
                     )
@@ -61,7 +61,7 @@ fun MinimalDropdownMenu(
             DropdownMenuItem(
                 text = {
                     Text(
-                        "Delete Book",
+                        stringResource(R.string.delete_book),
                         style = CustomTheme.typography.bodyLarge,
                         color = CustomTheme.colors.charcoalBlack
                     )
@@ -76,6 +76,7 @@ fun MinimalDropdownMenu(
                 },
                 onClick = onDeleteClick
             )
+
         }
     }
 }
