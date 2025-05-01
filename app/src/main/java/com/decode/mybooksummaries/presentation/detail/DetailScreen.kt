@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -67,6 +69,7 @@ import com.decode.mybooksummaries.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -79,7 +82,9 @@ import com.decode.mybooksummaries.domain.model.Quote
 import com.decode.mybooksummaries.presentation.detail.component.MinimalDropdownMenu
 import com.decode.mybooksummaries.core.ui.extensions.base64ToBitmap
 import com.decode.mybooksummaries.core.ui.theme.CustomTheme
-import com.decode.mybooksummaries.presentation.detail.util.splitTextByWords
+import com.decode.mybooksummaries.presentation.detail.utils.createPdfFromText
+import com.decode.mybooksummaries.presentation.detail.utils.sharePdf
+import com.decode.mybooksummaries.presentation.detail.utils.splitTextByWords
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -134,7 +139,7 @@ fun DetailScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState) { snackbarData ->
                 Snackbar(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(12.dp),
                     action = {
                         IconButton(onClick = { snackbarData.dismiss() }) {
@@ -200,6 +205,7 @@ fun DetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
             BookSummary(
                 summary = uiState.book.summary,
+                bookTitle = uiState.book.title,
                 showFullSummary = showDialog,
                 onReadMoreClick = {
                     showDialog = it
@@ -346,9 +352,11 @@ fun BookPage(currentPage: String, pageCount: String) {
 fun BookSummary(
     modifier: Modifier = Modifier,
     summary: String,
+    bookTitle: String,
     showFullSummary: Boolean,
     onReadMoreClick: (Boolean) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -363,12 +371,35 @@ fun BookSummary(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.summary),
-                    style = CustomTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = CustomTheme.colors.textWhite
-                )
+                Row(
+                    modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(R.string.summary),
+                        style = CustomTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = CustomTheme.colors.textWhite
+                    )
+                    IconButton(
+                        onClick = {
+                            val file = createPdfFromText(
+                                context = context,
+                                title = bookTitle,
+                                summary = summary
+                            )
+                            sharePdf(context, file)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            imageVector = Icons.Default.Share,
+                            contentDescription = null,
+                            tint = CustomTheme.colors.textWhite
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = summary,
