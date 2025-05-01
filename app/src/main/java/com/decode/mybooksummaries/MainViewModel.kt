@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.decode.mybooksummaries.core.network.ConnectivityObserver
 import com.decode.mybooksummaries.data.local.db.BookDatabase
-import com.decode.mybooksummaries.data.worker.SyncWorkManager
+import com.decode.mybooksummaries.data.worker.WorkScheduler
 import com.decode.mybooksummaries.di.IoDispatcher
 import com.decode.mybooksummaries.domain.usecase.auth.CurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     currentUser: CurrentUserUseCase,
-    private val syncWorkManager: SyncWorkManager,
+    private val syncWorkManager: WorkScheduler,
     private val connectivityObserver: ConnectivityObserver,
     private val db: BookDatabase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     private fun startSync() {
         viewModelScope.launch {
             connectivityObserver.isConnected.collectLatest { isConnected ->
-                if (isConnected) {
+                if (isConnected && !authUser) {
                     val shouldSync = withContext(ioDispatcher) {
                         val unsyncedBooks = db.bookDao().getUnsyncedBooks().isNotEmpty()
                         val deletedUnsyncedBooks = db.bookDao().getDeletedUnsyncedBooks().isNotEmpty()
@@ -49,10 +49,10 @@ class MainViewModel @Inject constructor(
                     } else {
                         Log.d("SyncViewModel", "No data to sync")
                     }
+                    syncWorkManager.startPeriodicSync()
                 }
             }
         }
     }
-
 
 }
