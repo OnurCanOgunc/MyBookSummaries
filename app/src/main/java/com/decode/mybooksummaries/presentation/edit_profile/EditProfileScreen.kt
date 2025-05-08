@@ -47,6 +47,7 @@ fun EditProfileScreen(
             .padding(horizontal = 16.dp)
     ) {
         TopBar(
+            modifier = Modifier.padding(top = 16.dp),
             title = stringResource(R.string.edit_profile),
             popBackStack = { onAction(UiAction.OnBackClick) })
 

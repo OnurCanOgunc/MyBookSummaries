@@ -99,7 +99,7 @@ fun SignInScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
+                .padding(16.dp)
                 .padding(top = 80.dp)
         ) {
             SignInHeader()

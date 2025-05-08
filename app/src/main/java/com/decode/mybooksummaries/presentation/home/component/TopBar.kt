@@ -37,7 +37,7 @@ fun TopBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 16.dp,  bottom = 12.dp)
+            .padding(bottom = 12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

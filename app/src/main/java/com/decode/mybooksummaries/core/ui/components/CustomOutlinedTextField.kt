@@ -51,6 +51,9 @@ fun CustomOutlinedTextField(
     var passwordVisibility by remember {
         mutableStateOf(true)
     }
+    var isPasswordVisible by remember {
+        mutableStateOf(isPassword)
+    }
     OutlinedTextField(
         value = value,
         maxLines = 1,
@@ -59,7 +62,7 @@ fun CustomOutlinedTextField(
         shape = RoundedCornerShape(10.dp),
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        visualTransformation = if (passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         leadingIcon = icon?.let {
             {
                 Icon(
@@ -71,9 +74,12 @@ fun CustomOutlinedTextField(
         },
         trailingIcon = if (isPassword) {
             {
-                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                IconButton(onClick = {
+                    passwordVisibility = !passwordVisibility
+                    isPasswordVisible = !isPasswordVisible
+                }) {
                     Icon(
-                        imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        imageVector = if (passwordVisibility) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = stringResource(R.string.toggle_password_visibility),
                         tint = CustomTheme.colors.textBlack,
                     )

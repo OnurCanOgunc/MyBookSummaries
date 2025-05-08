@@ -61,7 +61,7 @@ fun ProfileScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 IconButton(
                     onClick = { onBackClick() },
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -88,7 +88,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
         ) {
             ProfileHeader(
                 email = uiState.email,

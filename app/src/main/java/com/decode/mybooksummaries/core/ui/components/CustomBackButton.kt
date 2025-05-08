@@ -16,7 +16,7 @@ import com.decode.mybooksummaries.core.ui.theme.CustomTheme
 fun CustomBackButton(back: () -> Unit) {
     IconButton(
         onClick = back ,
-        modifier = Modifier.padding(top = 24.dp, start = 16.dp)
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Default.ArrowBack,

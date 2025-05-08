@@ -30,12 +30,12 @@ class WorkScheduler @Inject constructor(
 
     fun startPeriodicSync() {
         val periodicRequest = PeriodicWorkRequestBuilder<ReminderWorker>(
-            2, TimeUnit.DAYS
+            3, TimeUnit.DAYS
         ).setConstraints(
             Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .build()
-        ).setInitialDelay(2, TimeUnit.SECONDS)
+        )//.setInitialDelay(2, TimeUnit.SECONDS)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
